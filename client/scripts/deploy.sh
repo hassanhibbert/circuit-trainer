@@ -20,6 +20,14 @@ source "$ENV_FILE"
 : "${DEPLOY_HOST:?Set DEPLOY_HOST in .env.deploy.local}"
 : "${DEPLOY_PATH:?Set DEPLOY_PATH in .env.deploy.local}"
 
+# The API URL is baked into the bundle at build time (Vite inlines VITE_* variables).
+# Without it the build would silently point at http://localhost:8080.
+if ! grep -qs '^VITE_API_URL=.' "$PROJECT_ROOT/.env.production.local"; then
+  echo "Missing VITE_API_URL in .env.production.local" >&2
+  echo "Copy .env.production.local.example and set your Render API URL." >&2
+  exit 1
+fi
+
 echo "Building..."
 (cd "$PROJECT_ROOT" && yarn build)
 
