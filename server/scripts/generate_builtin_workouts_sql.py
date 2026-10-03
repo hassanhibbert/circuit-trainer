@@ -2,7 +2,8 @@
 """
 One-off generator for the Flyway seed migration of the built-in workouts.
 
-Reads the workout JSON files the frontend used to bundle (client/src/workouts/*.json)
+Reads the workout JSON files the frontend used to bundle (now kept in
+server/scripts/builtin-workouts/; they lived in client/src/workouts/ before the API existed)
 and prints SQL that inserts them as built-in workouts (owner_id is null).
 
     python3 server/scripts/generate_builtin_workouts_sql.py \
@@ -15,10 +16,9 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-WORKOUT_DIR = ROOT / "client" / "src" / "workouts"
+WORKOUT_DIR = Path(__file__).resolve().parent / "builtin-workouts"
 
-# Same order as client/src/workouts/index.js, which is the order the list shows them in.
+# Same order as the old client/src/workouts/index.js, which is the order the list shows them in.
 FILES = [
     "30_Beginner_HIIT.json",
     "30_Upper_Strength.json",

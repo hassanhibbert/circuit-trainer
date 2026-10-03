@@ -1,12 +1,41 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import { api, errorMessage } from "./api";
+import { QuietButton } from "./ui";
 
-export const BackupControls = ({ exportHistory, importHistory, historyCount }) => {
+const readFileAsText = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Couldn't read that file."));
+    reader.readAsText(file);
+  });
+
+// Backup downloads every session (with sets) from the API. Restore accepts that file, or an
+// old localStorage-era backup; the server merges and skips duplicates.
+export const BackupControls = ({ onRestored }) => {
   const fileInputRef = useRef(null);
+  const [busy, setBusy] = useState(false);
 
-  const handleImportClick = () => {
-    fileInputRef.current?.click();
+  const handleExport = async () => {
+    setBusy(true);
+    try {
+      const sessions = await api.get("/api/v1/sessions/export");
+      const blob = new Blob([JSON.stringify(sessions, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `circuit-trainer-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleFileChange = async (event) => {
@@ -14,28 +43,37 @@ export const BackupControls = ({ exportHistory, importHistory, historyCount }) =
     event.target.value = "";
     if (!file) return;
 
+    setBusy(true);
     try {
-      const { added, skipped } = await importHistory(file);
+      let entries;
+      try {
+        entries = JSON.parse(await readFileAsText(file));
+      } catch {
+        throw new Error("Couldn't read that file as JSON.");
+      }
+      if (!Array.isArray(entries)) throw new Error("Backup file isn't a valid history export.");
+      const { added, skipped } = await api.post("/api/v1/sessions/import", { entries });
       if (added === 0) {
         toast.info("Nothing new to import - already up to date.");
       } else {
-        toast.success(
-          `Imported ${added} session${added === 1 ? "" : "s"}${
-            skipped ? ` (${skipped} already on this device)` : ""
-          }.`
-        );
+        toast.success(`Imported ${added} session${added === 1 ? "" : "s"}${skipped ? ` (${skipped} already saved)` : ""}.`);
+        onRestored?.();
       }
     } catch (err) {
-      toast.error(err.message || "Couldn't import that backup.");
+      toast.error(errorMessage(err));
+    } finally {
+      setBusy(false);
     }
   };
 
   return (
-    <Footer>
-      <FooterButton onClick={exportHistory} disabled={historyCount === 0}>
+    <Buttons>
+      <QuietButton onClick={handleExport} disabled={busy}>
         Backup data
-      </FooterButton>
-      <FooterButton onClick={handleImportClick}>Restore backup</FooterButton>
+      </QuietButton>
+      <QuietButton onClick={() => fileInputRef.current?.click()} disabled={busy}>
+        Restore backup
+      </QuietButton>
       <input
         ref={fileInputRef}
         type="file"
@@ -43,25 +81,12 @@ export const BackupControls = ({ exportHistory, importHistory, historyCount }) =
         onChange={handleFileChange}
         style={{ display: "none" }}
       />
-    </Footer>
+    </Buttons>
   );
 };
 
-const Footer = styled.div`
-  margin-top: 30px;
+const Buttons = styled.div`
   display: flex;
-  justify-content: center;
   gap: 12px;
-`;
-
-const FooterButton = styled.button`
-  background: none;
-  border: 1px solid #5f5e5a;
-  color: #a0a0a0;
-  font-size: 0.85rem;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
+  flex-wrap: wrap;
 `;
