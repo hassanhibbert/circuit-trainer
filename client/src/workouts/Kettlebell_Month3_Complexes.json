@@ -1,0 +1,247 @@
+{
+  "title": "Kettlebell Month 3 - Strength-Endurance & Complexes",
+  "description": "<p>Single 35lb kettlebell &mdash; Weeks 9-12. Harder variations and combos, same bell, bigger challenge.</p><p>Warm up 5 minutes first: arm circles, hip openers, a few bodyweight squats, light swings.</p><p>This month trades pure volume for skill and total-body coordination.</p>",
+  "type": "manual",
+  "sessionsPerWeek": 3,
+  "programWeeks": 4,
+  "exercises": [
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 1 of 5 — Left",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 1 of 5 — Right",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 2 of 5 — Left",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 2 of 5 — Right",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 3 of 5 — Left",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 3 of 5 — Right",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 4 of 5 — Left",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 4 of 5 — Right",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 5 of 5 — Left",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Clean + Press",
+      "setLabel": "Set 5 of 5 — Right",
+      "reps": "5 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Reverse Lunge",
+      "setLabel": "Set 1 of 3 — Left",
+      "reps": "10 reps each leg",
+      "modifier": "holding goblet position",
+      "restSeconds": 45
+    },
+    {
+      "title": "Reverse Lunge",
+      "setLabel": "Set 1 of 3 — Right",
+      "reps": "10 reps each leg",
+      "modifier": "holding goblet position",
+      "restSeconds": 45
+    },
+    {
+      "title": "Reverse Lunge",
+      "setLabel": "Set 2 of 3 — Left",
+      "reps": "10 reps each leg",
+      "modifier": "holding goblet position",
+      "restSeconds": 45
+    },
+    {
+      "title": "Reverse Lunge",
+      "setLabel": "Set 2 of 3 — Right",
+      "reps": "10 reps each leg",
+      "modifier": "holding goblet position",
+      "restSeconds": 45
+    },
+    {
+      "title": "Reverse Lunge",
+      "setLabel": "Set 3 of 3 — Left",
+      "reps": "10 reps each leg",
+      "modifier": "holding goblet position",
+      "restSeconds": 45
+    },
+    {
+      "title": "Reverse Lunge",
+      "setLabel": "Set 3 of 3 — Right",
+      "reps": "10 reps each leg",
+      "modifier": "holding goblet position",
+      "restSeconds": 45
+    },
+    {
+      "title": "Renegade Row",
+      "setLabel": "Set 1 of 3 — Left",
+      "reps": "6 reps",
+      "modifier": "push-up + row",
+      "restSeconds": 45
+    },
+    {
+      "title": "Renegade Row",
+      "setLabel": "Set 1 of 3 — Right",
+      "reps": "6 reps",
+      "modifier": "push-up + row",
+      "restSeconds": 45
+    },
+    {
+      "title": "Renegade Row",
+      "setLabel": "Set 2 of 3 — Left",
+      "reps": "6 reps",
+      "modifier": "push-up + row",
+      "restSeconds": 45
+    },
+    {
+      "title": "Renegade Row",
+      "setLabel": "Set 2 of 3 — Right",
+      "reps": "6 reps",
+      "modifier": "push-up + row",
+      "restSeconds": 45
+    },
+    {
+      "title": "Renegade Row",
+      "setLabel": "Set 3 of 3 — Left",
+      "reps": "6 reps",
+      "modifier": "push-up + row",
+      "restSeconds": 45
+    },
+    {
+      "title": "Renegade Row",
+      "setLabel": "Set 3 of 3 — Right",
+      "reps": "6 reps",
+      "modifier": "push-up + row",
+      "restSeconds": 45
+    },
+    {
+      "title": "Swing -> Squat -> Press Complex",
+      "setLabel": "Round 1 of 3 — Left",
+      "reps": "8 reps each move",
+      "modifier": "8 reps of each move per round",
+      "restSeconds": 60
+    },
+    {
+      "title": "Swing -> Squat -> Press Complex",
+      "setLabel": "Round 1 of 3 — Right",
+      "reps": "8 reps each move",
+      "modifier": "8 reps of each move per round",
+      "restSeconds": 60
+    },
+    {
+      "title": "Swing -> Squat -> Press Complex",
+      "setLabel": "Round 2 of 3 — Left",
+      "reps": "8 reps each move",
+      "modifier": "8 reps of each move per round",
+      "restSeconds": 60
+    },
+    {
+      "title": "Swing -> Squat -> Press Complex",
+      "setLabel": "Round 2 of 3 — Right",
+      "reps": "8 reps each move",
+      "modifier": "8 reps of each move per round",
+      "restSeconds": 60
+    },
+    {
+      "title": "Swing -> Squat -> Press Complex",
+      "setLabel": "Round 3 of 3 — Left",
+      "reps": "8 reps each move",
+      "modifier": "8 reps of each move per round",
+      "restSeconds": 60
+    },
+    {
+      "title": "Swing -> Squat -> Press Complex",
+      "setLabel": "Round 3 of 3 — Right",
+      "reps": "8 reps each move",
+      "modifier": "8 reps of each move per round",
+      "restSeconds": 60
+    },
+    {
+      "title": "Turkish Get-Up",
+      "setLabel": "Set 1 of 3 — Left",
+      "reps": "3 reps",
+      "modifier": "light, focus on control",
+      "restSeconds": 60
+    },
+    {
+      "title": "Turkish Get-Up",
+      "setLabel": "Set 1 of 3 — Right",
+      "reps": "3 reps",
+      "modifier": "light, focus on control",
+      "restSeconds": 60
+    },
+    {
+      "title": "Turkish Get-Up",
+      "setLabel": "Set 2 of 3 — Left",
+      "reps": "3 reps",
+      "modifier": "light, focus on control",
+      "restSeconds": 60
+    },
+    {
+      "title": "Turkish Get-Up",
+      "setLabel": "Set 2 of 3 — Right",
+      "reps": "3 reps",
+      "modifier": "light, focus on control",
+      "restSeconds": 60
+    },
+    {
+      "title": "Turkish Get-Up",
+      "setLabel": "Set 3 of 3 — Left",
+      "reps": "3 reps",
+      "modifier": "light, focus on control",
+      "restSeconds": 60
+    },
+    {
+      "title": "Turkish Get-Up",
+      "setLabel": "Set 3 of 3 — Right",
+      "reps": "3 reps",
+      "modifier": "light, focus on control",
+      "restSeconds": 60
+    }
+  ]
+}

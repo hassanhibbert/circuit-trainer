@@ -1,0 +1,39 @@
+{
+  "title": "Manual Full-Body Circuit",
+  "description": "<p>Self-paced circuit &mdash; go at your own speed.</p><p>Do each exercise, then tap <strong>Start Break</strong>. Rest as long as you need, then tap <strong>Next Workout</strong> to continue.</p><p><strong>Equipment:</strong> Dumbbells and resistance bands (optional).</p>",
+  "type": "manual",
+  "exercises": [
+    {
+      "title": "Jumping Jacks",
+      "modifier": null
+    },
+    {
+      "title": "Bodyweight Squats",
+      "modifier": "or Goblet Squats"
+    },
+    {
+      "title": "Push-Ups",
+      "modifier": "knees/elevated if needed"
+    },
+    {
+      "title": "Reverse Lunges",
+      "modifier": "hold dumbbells to increase challenge"
+    },
+    {
+      "title": "Dumbbell Rows or Band Rows",
+      "modifier": null
+    },
+    {
+      "title": "Plank Hold",
+      "modifier": "on forearms or knees"
+    },
+    {
+      "title": "Glute Bridges",
+      "modifier": "add dumbbell or band to progress"
+    },
+    {
+      "title": "Bicycle Crunches",
+      "modifier": null
+    }
+  ]
+}

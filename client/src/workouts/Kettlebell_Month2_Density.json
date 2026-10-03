@@ -1,0 +1,301 @@
+{
+  "title": "Kettlebell Month 2 - Density & Conditioning",
+  "description": "<p>Single 35lb kettlebell &mdash; Weeks 5-8. Same movements, less rest, more work capacity.</p><p>Warm up 5 minutes first: arm circles, hip openers, a few bodyweight squats, light swings.</p><p>Progress by dropping rest 5-10s every 2 weeks as it gets manageable.</p>",
+  "type": "manual",
+  "sessionsPerWeek": 3,
+  "programWeeks": 4,
+  "exercises": [
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 1 of 5 — Left",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 1 of 5 — Right",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 2 of 5 — Left",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 2 of 5 — Right",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 3 of 5 — Left",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 3 of 5 — Right",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 4 of 5 — Left",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 4 of 5 — Right",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 5 of 5 — Left",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Swing",
+      "setLabel": "Set 5 of 5 — Right",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Goblet Squat",
+      "setLabel": "Set 1 of 4",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Goblet Squat",
+      "setLabel": "Set 2 of 4",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Goblet Squat",
+      "setLabel": "Set 3 of 4",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Goblet Squat",
+      "setLabel": "Set 4 of 4",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 1 of 4 — Left",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 1 of 4 — Right",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 2 of 4 — Left",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 2 of 4 — Right",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 3 of 4 — Left",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 3 of 4 — Right",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 4 of 4 — Left",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 4 of 4 — Right",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 1 of 4 — Left",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 1 of 4 — Right",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 2 of 4 — Left",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 2 of 4 — Right",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 3 of 4 — Left",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 3 of 4 — Right",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 4 of 4 — Left",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 4 of 4 — Right",
+      "reps": "6-8 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Push-Ups",
+      "setLabel": "Set 1 of 4",
+      "reps": "Max reps (leave 2 in reserve)",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Push-Ups",
+      "setLabel": "Set 2 of 4",
+      "reps": "Max reps (leave 2 in reserve)",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Push-Ups",
+      "setLabel": "Set 3 of 4",
+      "reps": "Max reps (leave 2 in reserve)",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Push-Ups",
+      "setLabel": "Set 4 of 4",
+      "reps": "Max reps (leave 2 in reserve)",
+      "modifier": null,
+      "restSeconds": 30
+    },
+    {
+      "title": "Farmer's Carry",
+      "setLabel": "Set 1 of 3 — Left",
+      "reps": "40-60s carry",
+      "modifier": "heavy walk, single bell",
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 50
+    },
+    {
+      "title": "Farmer's Carry",
+      "setLabel": "Set 1 of 3 — Right",
+      "reps": "40-60s carry",
+      "modifier": "heavy walk, single bell",
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 50
+    },
+    {
+      "title": "Farmer's Carry",
+      "setLabel": "Set 2 of 3 — Left",
+      "reps": "40-60s carry",
+      "modifier": "heavy walk, single bell",
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 50
+    },
+    {
+      "title": "Farmer's Carry",
+      "setLabel": "Set 2 of 3 — Right",
+      "reps": "40-60s carry",
+      "modifier": "heavy walk, single bell",
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 50
+    },
+    {
+      "title": "Farmer's Carry",
+      "setLabel": "Set 3 of 3 — Left",
+      "reps": "40-60s carry",
+      "modifier": "heavy walk, single bell",
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 50
+    },
+    {
+      "title": "Farmer's Carry",
+      "setLabel": "Set 3 of 3 — Right",
+      "reps": "40-60s carry",
+      "modifier": "heavy walk, single bell",
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 50
+    }
+  ]
+}

@@ -1,0 +1,377 @@
+{
+  "title": "Beginner HIIT Workout - 30 Minutes",
+  "description": "<p>Perform <strong>30 seconds of work</strong> followed by <strong>30 seconds of rest</strong> for each exercise. Rest 60 seconds between rounds.<p><strong>Includes:</strong> Warm-up, <strong>4 workout rounds</strong> (5 mins each), and cooldown.<p><strong>Equipment:</strong> Dumbbells and resistance bands (optional).",
+  "sections": [
+    {
+      "id": 1,
+      "title": [
+        "Warm-Up"
+      ],
+      "units": [
+        {
+          "title": "March in Place",
+          "modifier": null,
+          "minutes": 1,
+          "seconds": 0
+        },
+        {
+          "title": "Arm Circles",
+          "modifier": null,
+          "minutes": 1,
+          "seconds": 0
+        },
+        {
+          "title": "Hip Circles",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Knee Hugs",
+          "modifier": null,
+          "minutes": 1,
+          "seconds": 0
+        },
+        {
+          "title": "Bodyweight Squats",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Butt Kicks",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Torso Twists",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": [
+        "Round 1",
+        "Lower Body & Cardio"
+      ],
+      "description": "Lower Body & Cardio",
+      "units": [
+        {
+          "title": "Jumping Jacks",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Bodyweight Squats",
+          "modifier": "or Goblet Squats",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Glute Bridges",
+          "modifier": "add dumbbell or band to progress",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Reverse Lunges",
+          "modifier": "hold dumbbells to increase challenge",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Mountain Climbers",
+          "modifier": "step or run in place",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": [
+        "Round 2",
+        "Upper Body & Core"
+      ],
+      "units": [
+        {
+          "title": "High Knees",
+          "modifier": "or marching",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Push-Ups",
+          "modifier": "knees/elevated if needed",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Dumbbell Rows or Band Rows",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Dumbbell Shoulder Press",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Plank Hold",
+          "modifier": "on formearms or knees",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": [
+        "Round 3",
+        "Full-Body"
+      ],
+      "units": [
+        {
+          "title": "Skater Jumps or Side Steps",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Lateral Band Walk or Side Lunges",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Dumbbell Deadlifts",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Triceps Dips",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Bicycle Crunches",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": [
+        "Round 4",
+        "Finisher"
+      ],
+      "units": [
+        {
+          "title": "Squat to Press",
+          "modifier": "thruster",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Resistance Band Rows",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Burpees",
+          "modifier": "or modified step burpees",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Alternating Side Lunches",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Plank Jacks",
+          "modifier": "or hold",
+          "minutes": 0,
+          "seconds": 30
+        },
+        {
+          "title": "Rest",
+          "modifier": null,
+          "minutes": 1,
+          "seconds": 0
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": [
+        "Cooldown"
+      ],
+      "units": [
+        {
+          "title": "Light March",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 50
+        },
+        {
+          "title": "Calf Stretch",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 50
+        },
+        {
+          "title": "Quad Stretch",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 50
+        },
+        {
+          "title": "Hamstring Stretch",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 50
+        },
+        {
+          "title": "Glute Stretch",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 50
+        },
+        {
+          "title": "Chest & Upper Back Stretch",
+          "modifier": null,
+          "minutes": 0,
+          "seconds": 50
+        }
+      ]
+    }
+  ]
+}

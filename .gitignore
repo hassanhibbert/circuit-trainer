@@ -1,0 +1,25 @@
+# OS / editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.iml
+
+# Personal learning notes -- never committed, shipped or published
+LEARNING_REPORT.md
+
+# Claude Code local state
+.claude/
+
+# Yarn Berry (PnP, not zero-install: packages come from the global cache)
+client/.pnp.*
+client/.yarn/*
+!client/.yarn/patches
+!client/.yarn/plugins
+!client/.yarn/releases
+!client/.yarn/sdks
+!client/.yarn/versions
+
+# Java / Maven
+server/target/
+server/.mvn/wrapper/maven-wrapper.jar

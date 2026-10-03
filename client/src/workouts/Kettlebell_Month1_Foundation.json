@@ -1,0 +1,197 @@
+{
+  "title": "Kettlebell Month 1 - Foundation",
+  "description": "<p>Single 35lb kettlebell &mdash; Weeks 1-4. Goal: rebuild movement quality and base conditioning.</p><p>Warm up 5 minutes first: arm circles, hip openers, a few bodyweight squats, light swings.</p><p>Progress week to week by adding 2-3 reps to swings/squats, or add 1 set once form is solid.</p>",
+  "type": "manual",
+  "sessionsPerWeek": 3,
+  "programWeeks": 4,
+  "exercises": [
+    {
+      "title": "Two-Hand Swing",
+      "setLabel": "Set 1 of 5",
+      "reps": "15 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Two-Hand Swing",
+      "setLabel": "Set 2 of 5",
+      "reps": "15 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Two-Hand Swing",
+      "setLabel": "Set 3 of 5",
+      "reps": "15 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Two-Hand Swing",
+      "setLabel": "Set 4 of 5",
+      "reps": "15 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Two-Hand Swing",
+      "setLabel": "Set 5 of 5",
+      "reps": "15 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Goblet Squat",
+      "setLabel": "Set 1 of 3",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Goblet Squat",
+      "setLabel": "Set 2 of 3",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Goblet Squat",
+      "setLabel": "Set 3 of 3",
+      "reps": "12 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 1 of 3 — Left",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 1 of 3 — Right",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 2 of 3 — Left",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 2 of 3 — Right",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 3 of 3 — Left",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Row",
+      "setLabel": "Set 3 of 3 — Right",
+      "reps": "10 reps",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 1 of 3 — Left",
+      "reps": "6 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 1 of 3 — Right",
+      "reps": "6 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 2 of 3 — Left",
+      "reps": "6 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 2 of 3 — Right",
+      "reps": "6 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 3 of 3 — Left",
+      "reps": "6 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Single-Arm Overhead Press",
+      "setLabel": "Set 3 of 3 — Right",
+      "reps": "6 reps",
+      "modifier": null,
+      "restSeconds": 60
+    },
+    {
+      "title": "Push-Ups",
+      "setLabel": "Set 1 of 3",
+      "reps": "Max reps (leave 2 in reserve)",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Push-Ups",
+      "setLabel": "Set 2 of 3",
+      "reps": "Max reps (leave 2 in reserve)",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Push-Ups",
+      "setLabel": "Set 3 of 3",
+      "reps": "Max reps (leave 2 in reserve)",
+      "modifier": null,
+      "restSeconds": 45
+    },
+    {
+      "title": "Plank",
+      "setLabel": "Set 1 of 3",
+      "reps": "30-40s hold",
+      "modifier": null,
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 35
+    },
+    {
+      "title": "Plank",
+      "setLabel": "Set 2 of 3",
+      "reps": "30-40s hold",
+      "modifier": null,
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 35
+    },
+    {
+      "title": "Plank",
+      "setLabel": "Set 3 of 3",
+      "reps": "30-40s hold",
+      "modifier": null,
+      "restSeconds": 30,
+      "minutes": 0,
+      "seconds": 35
+    }
+  ]
+}
