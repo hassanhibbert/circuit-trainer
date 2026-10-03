@@ -1,0 +1,19 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+### IDEs ###
+.idea
+*.iws
+*.iml
+*.ipr
+.vscode/
+.classpath
+.factorypath
+.project
+.settings
+
+### Local secrets ###
+.env
+application-local.properties
+application-*-local.properties

@@ -1,0 +1,12 @@
+# Keep the build context small and secret-free.
+target/
+.idea/
+.vscode/
+*.iml
+HELP.md
+.env
+scripts/
+LEARNING_REPORT.md
+# Would otherwise be copied by "COPY src src" and baked into the image, local secret included.
+src/main/resources/application-local.properties
+src/main/resources/application-*-local.properties

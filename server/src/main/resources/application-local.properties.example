@@ -1,0 +1,5 @@
+# Copy to application-local.properties (gitignored) and run with the "local" profile:
+#   ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+# Generate a secret with: openssl rand -base64 48
+JWT_SECRET=
+# DB_PASSWORD=
