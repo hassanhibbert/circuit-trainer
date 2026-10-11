@@ -80,7 +80,7 @@ Errors come back as [problem details](https://www.rfc-editor.org/rfc/rfc9457):
 
 ## Running locally
 
-Needs JDK 21, Node 22 with Yarn 4 (`corepack enable`) and Postgres ([Postgres.app](https://postgresapp.com) works).
+Needs JDK 21, Node 24+ with Yarn 4 (`corepack enable`) and Postgres ([Postgres.app](https://postgresapp.com) works).
 
 ```bash
 createdb circuit_trainer
