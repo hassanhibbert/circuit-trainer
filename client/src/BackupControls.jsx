@@ -12,8 +12,6 @@ const readFileAsText = (file) =>
     reader.readAsText(file);
   });
 
-// Backup downloads every session (with sets) from the API. Restore accepts that file, or an
-// old localStorage-era backup; the server merges and skips duplicates.
 export const BackupControls = ({ onRestored }) => {
   const fileInputRef = useRef(null);
   const [busy, setBusy] = useState(false);

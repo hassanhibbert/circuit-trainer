@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @UsesDatabase
 class WorkoutSessionRepositoryTest {
-
     @Autowired AppUserRepository users;
     @Autowired WorkoutRepository workouts;
     @Autowired WorkoutSessionRepository sessions;
@@ -45,7 +44,7 @@ class WorkoutSessionRepositoryTest {
         log(alice, kettlebell, "2026-09-01T10:00:00Z", new SessionSet("Swing", null, 15, new BigDecimal("35.0"), null),
                 new SessionSet("Plank", null, null, null, 35));
         log(alice, kettlebell, "2026-09-03T10:00:00Z", new SessionSet("Swing", null, 20, new BigDecimal("35.0"), null));
-        log(alice, null, "2026-09-05T10:00:00Z");  // imported history that matched no workout
+        log(alice, null, "2026-09-05T10:00:00Z");
         log(bob, kettlebell, "2026-09-04T10:00:00Z", new SessionSet("Swing", null, 100, new BigDecimal("100.0"), null));
     }
 
@@ -73,7 +72,6 @@ class WorkoutSessionRepositoryTest {
     void aggregates_areComputedInTheDatabase() {
         assertThat(sessions.countByOwnerId(alice.getId())).isEqualTo(3);
         assertThat(sessions.sumTotalSeconds(alice.getId())).isEqualTo(3600);
-        // 15 x 35 + 20 x 35; the plank (no reps/weight) adds nothing.
         assertThat(sessions.sumVolumeLb(alice.getId())).isEqualByComparingTo("1225");
     }
 
@@ -97,8 +95,6 @@ class WorkoutSessionRepositoryTest {
 
     @Test
     void checkConstraint_rejectsASetWithNoMeasurement() {
-        // Validation lives on SetRequest; going straight to the repository skips it.
-        // The V4 CHECK (reps or weight or duration) still refuses the row.
         assertThatThrownBy(() -> log(alice, kettlebell, "2026-09-10T10:00:00Z",
                 new SessionSet("Nothing", null, null, null, null)))
                 .isInstanceOf(DataIntegrityViolationException.class);

@@ -21,7 +21,6 @@ public class WorkoutController {
         this.workoutService = workoutService;
     }
 
-    /** Built-in workouts first, then the caller's own. */
     @GetMapping
     public List<WorkoutResponse> listWorkouts(@CurrentUserId Long userId) {
         return workoutService.listVisible(userId);
@@ -50,7 +49,6 @@ public class WorkoutController {
         return ResponseEntity.noContent().build();
     }
 
-    /** Copies a workout (typically a built-in) into the caller's own, editable list. */
     @PostMapping("/{id}/copy")
     public ResponseEntity<WorkoutResponse> copyWorkout(@PathVariable Long id, @CurrentUserId Long userId) {
         return created(workoutService.copy(id, userId));

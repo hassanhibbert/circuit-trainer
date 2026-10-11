@@ -9,7 +9,6 @@ import java.util.List;
 
 public record SessionResponse(
         Long id,
-        // Null when the workout was deleted, or for imported history that matched no workout.
         Long workoutId,
         String workoutTitle,
         Instant completedAt,
@@ -18,17 +17,14 @@ public record SessionResponse(
         BigDecimal volumeLb,
         List<Set> sets
 ) {
-
     public record Set(String exerciseTitle, String setLabel, Integer reps, BigDecimal weightLb,
                       Integer durationSeconds) {
-
         static Set fromEntity(SessionSet s) {
             return new Set(s.getExerciseTitle(), s.getSetLabel(), s.getReps(), s.getWeightLb(), s.getDurationSeconds());
         }
     }
 
     public static SessionResponse fromEntity(WorkoutSession s) {
-        // getWorkout().getId() on a lazy proxy returns the id it already holds; no query.
         Long workoutId = s.getWorkout() == null ? null : s.getWorkout().getId();
         return new SessionResponse(s.getId(), workoutId, s.getWorkoutTitle(), s.getCompletedAt(),
                 s.getTotalSeconds(), s.getNotes(), s.volumeLb(),

@@ -17,16 +17,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Full-stack test: real Spring context, real security with real signed JWTs, real Postgres.
- * Slow-ish, so there are only a few, covering what the slices can't: the pieces working together.
- * Usernames are random because these tests commit, and may run against a long-lived database.
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 @UsesDatabase
 class CircuitTrainerApplicationTests {
-
     @Autowired MockMvc mvc;
 
     @Test
@@ -57,7 +51,6 @@ class CircuitTrainerApplicationTests {
                 .andExpect(jsonPath("$.workouts[0].workoutId").value(kettlebellId))
                 .andExpect(jsonPath("$.workouts[0].currentWeek").value(1));
 
-        // Bob is authenticated, but authentication isn't authorization: alice's session is invisible to him.
         mvc.perform(get("/api/v1/sessions/" + sessionId).header("Authorization", "Bearer " + bob))
                 .andExpect(status().isNotFound());
         mvc.perform(get("/api/v1/stats").header("Authorization", "Bearer " + bob))

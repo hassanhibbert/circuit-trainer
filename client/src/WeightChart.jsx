@@ -10,8 +10,6 @@ const DAY_MS = 86400000;
 const formatDay = (iso) =>
   new Date(`${iso}T00:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 
-// Single-series line chart of body weight over time. One series, so no legend: the card
-// title names it. Hovering (or touching) snaps to the nearest weigh-in and shows its value.
 export const WeightChart = ({ entries }) => {
   const [hoverIndex, setHoverIndex] = useState(null);
 

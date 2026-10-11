@@ -1,8 +1,4 @@
-// Saving a finished workout must never fail silently: the gym may have no signal, or the
-// server may be asleep. Failed saves go to a per-user "outbox" in localStorage and are retried
-// on the next app start. Each payload carries its own completedAt, so a retry keeps the real
-// time, and the server's (workout, completedAt) uniqueness turns an accidental double send
-// into a harmless 409 instead of a duplicate.
+// failed saves get queued per user and retried on the next start
 import { api } from "./api";
 
 const outboxKey = (username) => `circuit-trainer:outbox:${username}`;
@@ -22,11 +18,10 @@ const writeOutbox = (username, items) => {
     if (items.length) localStorage.setItem(outboxKey(username), JSON.stringify(items));
     else localStorage.removeItem(outboxKey(username));
   } catch {
-    // storage unavailable: nothing more we can do
+    // ignore
   }
 };
 
-/** Returns the saved session, or null if it was queued for later. */
 export async function recordSession(username, payload) {
   try {
     return await api.post("/api/v1/sessions", payload);
@@ -37,11 +32,9 @@ export async function recordSession(username, payload) {
   }
 }
 
-// One flush at a time: React StrictMode runs start-up effects twice in development, and two
-// concurrent flushes would both send the same queued items.
+// strict mode runs effects twice in dev, don't send the queue twice
 let flushInFlight = null;
 
-/** Sends queued sessions. Returns how many were saved. */
 export function flushOutbox(username) {
   if (!flushInFlight) {
     flushInFlight = sendOutbox(username).finally(() => {
@@ -61,7 +54,7 @@ async function sendOutbox(username) {
       await api.post("/api/v1/sessions", payload);
       sent++;
     } catch (err) {
-      // Other 4xx (e.g. 409: it already arrived) will never succeed, so they're dropped.
+      // any other 4xx (like a 409, already saved) won't ever succeed
       if (isRetryable(err)) remaining.push(payload);
     }
   }

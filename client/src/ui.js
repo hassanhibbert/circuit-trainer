@@ -1,4 +1,3 @@
-// Shared styled pieces, matching the existing look: dark cards, teal accent, Source Sans 3.
 import styled from "styled-components";
 
 export const ACCENT = "#00b7ac";
@@ -123,7 +122,7 @@ export const formatDuration = (totalSeconds) => {
 
 export const formatLb = (value) => (value == null ? "–" : `${Number(value).toFixed(1)} lb`);
 
-// Today's date as YYYY-MM-DD in the user's local zone (toISOString would use UTC).
+// local date, toISOString would give UTC
 export const localToday = () => {
   const now = new Date();
   const offset = now.getTimezoneOffset() * 60000;

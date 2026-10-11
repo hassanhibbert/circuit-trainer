@@ -20,10 +20,6 @@ public class TokenService {
         this.properties = properties;
     }
 
-    /**
-     * The token is signed, not encrypted: anyone holding it can base64-decode the claims.
-     * So it carries only an id and a username, never anything secret.
-     */
     public String issue(AppUser user) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()

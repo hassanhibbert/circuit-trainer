@@ -18,15 +18,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * One place that turns exceptions into HTTP responses, for every controller.
- * Extending ResponseEntityExceptionHandler gives consistent ProblemDetail bodies
- * (RFC 9457: type, title, status, detail, instance) for Spring's own errors too,
- * e.g. malformed JSON or an unknown enum value.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -54,29 +47,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problem(HttpStatus.BAD_REQUEST, "Invalid query", ex.getMessage());
     }
 
-    /** Failed login or password check. Thrown inside a controller call, so it reaches this advice. */
     @ExceptionHandler(BadCredentialsException.class)
     public ProblemDetail handleBadCredentials(BadCredentialsException ex) {
         return problem(HttpStatus.UNAUTHORIZED, "Authentication failed", ex.getMessage());
     }
 
-    /**
-     * The database backstop fired (a CHECK, NOT NULL, UNIQUE or FK constraint). If validation
-     * is doing its job this is rare. Don't echo the SQL error to the client: it leaks schema details.
-     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ProblemDetail handleDataIntegrity(DataIntegrityViolationException ex) {
         log.warn("Data integrity violation", ex);
         return problem(HttpStatus.CONFLICT, "Data conflict", "The request conflicts with existing data");
     }
 
-    /** @Valid failed: return every field error, not just the first one. */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatusCode status,
                                                                   WebRequest request) {
         Map<String, String> errors = new LinkedHashMap<>();
-        // Nested fields keep their path, e.g. "sections[0].exercises[2].title".
         ex.getBindingResult().getFieldErrors()
                 .forEach(error -> errors.putIfAbsent(error.getField(), error.getDefaultMessage()));
 

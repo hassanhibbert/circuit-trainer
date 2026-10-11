@@ -21,8 +21,6 @@ jobs:
           cache: maven
           cache-dependency-path: server/pom.xml
 
-      # GitHub's Ubuntu runners have Docker, so the Testcontainers tests run here
-      # instead of being skipped.
       - name: Build and test
         run: ./mvnw -B verify
 
@@ -41,7 +39,6 @@ jobs:
         with:
           node-version: '22'
 
-      # Yarn Berry is pinned by package.json's "packageManager"; corepack provides it.
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn lint

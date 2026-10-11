@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GoalRepository extends JpaRepository<Goal, Long> {
-
     List<Goal> findByOwnerIdOrderByIdAsc(Long ownerId);
 
     Optional<Goal> findByIdAndOwnerId(Long id, Long ownerId);

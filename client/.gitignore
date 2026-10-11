@@ -12,7 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Env files (deploy credentials, etc.) -- keep .example templates tracked
 .env
 .env.*
 !.env.*.example

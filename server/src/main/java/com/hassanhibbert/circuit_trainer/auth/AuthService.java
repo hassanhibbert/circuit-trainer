@@ -16,7 +16,6 @@ public class AuthService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    // Hash of a throwaway password, computed once. See login().
     private final String dummyHash;
 
     public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder,
@@ -40,12 +39,10 @@ public class AuthService {
     @Transactional(readOnly = true)
     public TokenResponse login(LoginRequest request) {
         Optional<AppUser> user = appUserRepository.findByUsername(request.username());
-        // Always run one BCrypt comparison, even for unknown usernames. Otherwise "no such user"
-        // answers in ~1ms and "wrong password" in ~100ms, and an attacker can enumerate usernames.
+        // always run bcrypt so unknown usernames take as long as wrong passwords
         String hash = user.map(AppUser::getPasswordHash).orElse(dummyHash);
         boolean matches = passwordEncoder.matches(request.password(), hash);
         if (user.isEmpty() || !matches) {
-            // Same message for both cases, for the same reason.
             throw new BadCredentialsException("Invalid username or password");
         }
         return issueFor(user.get());

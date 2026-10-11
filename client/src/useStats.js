@@ -8,7 +8,7 @@ export const useStats = () => {
     try {
       setStats(await api.get(`/api/v1/stats?tz=${encodeURIComponent(userTimeZone())}`));
     } catch {
-      // The workout list still works without stats; the subtitles just stay empty.
+      // stats are optional
     }
   }, []);
 

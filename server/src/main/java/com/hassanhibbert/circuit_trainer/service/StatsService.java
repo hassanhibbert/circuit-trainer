@@ -15,10 +15,6 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * One dashboard call. Every number is an aggregate the database computes (count, sum, min,
- * max, group by); no list of sessions is ever loaded into memory to be counted in Java.
- */
 @Service
 @Transactional(readOnly = true)
 public class StatsService {

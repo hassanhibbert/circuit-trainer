@@ -34,13 +34,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // CSRF attacks ride on cookies the browser attaches automatically. This API
-                // authenticates with an Authorization header the client must add explicitly,
-                // so there is no ambient credential to forge. (With session cookies, keep CSRF on.)
+                // token is sent in a header, not a cookie, so CSRF doesn't apply
                 .csrf(csrf -> csrf.disable())
-                // Uses the CorsConfigurationSource bean below. CORS must be handled by Spring
-                // Security, before authentication: a browser's preflight OPTIONS request never
-                // carries the token, so it would otherwise be rejected with 401.
+                // has to be handled here, otherwise the preflight (no token) gets a 401
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -48,17 +44,10 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health", "/error").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
-                // Validates "Authorization: Bearer <jwt>" on every request using the JwtDecoder below.
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
     }
 
-    /**
-     * The frontend is served from a different origin (DreamHost) than the API (Render), so the
-     * browser asks first ("preflight") whether that origin may call us. Only listed origins may.
-     * CORS protects users' browsers from other websites; it is not access control for the API
-     * itself (curl ignores it), which is what the JWT is for.
-     */
     @Bean
     CorsConfigurationSource corsConfigurationSource(CorsProperties properties) {
         CorsConfiguration config = new CorsConfiguration();
@@ -66,9 +55,7 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of(HttpHeaders.AUTHORIZATION, HttpHeaders.CONTENT_TYPE));
         config.setExposedHeaders(List.of(HttpHeaders.LOCATION));
-        // No cookies are involved (the token travels in a header), so credentials stay off.
         config.setAllowCredentials(false);
-        // Lets the browser cache a preflight answer instead of repeating it before every call.
         config.setMaxAge(Duration.ofHours(1));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -91,12 +78,10 @@ public class SecurityConfig {
         NimbusJwtDecoder decoder = NimbusJwtDecoder.withSecretKey(jwtSigningKey)
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
-        // Default validators check exp/nbf; also reject tokens not issued by this app.
         decoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(properties.issuer()));
         return decoder;
     }
 
-    /** BCrypt by default; the stored hash is prefixed with {bcrypt} so the algorithm can change later. */
     @Bean
     PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();

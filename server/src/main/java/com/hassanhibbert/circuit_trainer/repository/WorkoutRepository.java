@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WorkoutRepository extends JpaRepository<Workout, Long> {
-
-    // "left join": an inner join on owner would silently drop the built-ins, whose owner is null.
-    // Built-ins are listed first, then the user's own workouts in the order they were created.
+    // left join, built-ins have no owner
     @Query("""
             select w from Workout w left join w.owner o
             where o is null or o.id = :ownerId
@@ -19,7 +17,6 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
             """)
     List<Workout> findAllVisibleTo(@Param("ownerId") Long ownerId);
 
-    /** A workout the user may read: a built-in, or one of their own. Anything else is "not found". */
     @Query("""
             select w from Workout w left join w.owner o
             where w.id = :id and (o is null or o.id = :ownerId)

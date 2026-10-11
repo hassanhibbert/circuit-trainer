@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@SecurityRequirements // these endpoints are public: no lock icon in Swagger UI
+@SecurityRequirements
 public class AuthController {
     private final AuthService authService;
 

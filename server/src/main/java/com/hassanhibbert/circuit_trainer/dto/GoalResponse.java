@@ -15,13 +15,7 @@ public record GoalResponse(
         LocalDate targetDate,
         Progress progress
 ) {
-
-    /**
-     * Derived, never stored: progress changes every time a weight or a session is logged, and
-     * a stored copy would go stale. currentValue/percent are null when there's no data yet.
-     */
     public record Progress(BigDecimal currentValue, Integer percent, boolean achieved) {
-
         public static final Progress NONE = new Progress(null, null, false);
     }
 

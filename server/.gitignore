@@ -2,7 +2,6 @@ HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 
-### IDEs ###
 .idea
 *.iws
 *.iml
@@ -13,7 +12,6 @@ target/
 .project
 .settings
 
-### Local secrets ###
 .env
-application-local.properties
-application-*-local.properties
+.env.*
+!.env.*.example

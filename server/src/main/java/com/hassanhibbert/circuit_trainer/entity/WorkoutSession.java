@@ -7,7 +7,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-/** One completed workout, and the sets that were actually performed in it. */
 @Entity
 @Table(name = "workout_sessions")
 public class WorkoutSession {
@@ -19,12 +18,11 @@ public class WorkoutSession {
     @JoinColumn(name = "owner_id", nullable = false)
     private AppUser owner;
 
-    // Nullable: imported history may not match any workout, and deleting a custom
-    // workout sets this to null (ON DELETE SET NULL) instead of deleting the history.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workout_id")
     private Workout workout;
 
+    // copied so history still makes sense after the workout is renamed or deleted
     @Column(name = "workout_title", nullable = false, length = 120)
     private String workoutTitle;
 
@@ -66,7 +64,6 @@ public class WorkoutSession {
         }
     }
 
-    /** Training volume: the sum of reps x weight over every set that has both. */
     public BigDecimal volumeLb() {
         return sets.stream()
                 .filter(s -> s.getReps() != null && s.getWeightLb() != null)

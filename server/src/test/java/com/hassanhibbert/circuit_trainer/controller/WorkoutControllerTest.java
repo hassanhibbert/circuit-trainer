@@ -30,20 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Slice test: only the web layer (this controller, the exception handler, JSON, validation
- * and our real SecurityConfig) is started. The service is a Mockito mock, so these tests
- * check the HTTP contract: status codes, JSON shape, which user id reaches the service.
- */
 @WebMvcTest(WorkoutController.class)
 @Import(SecurityConfig.class)
 @ActiveProfiles("test")
 class WorkoutControllerTest {
-
     @Autowired MockMvc mvc;
     @MockitoBean WorkoutService workoutService;
 
-    /** Simulates an already-validated JWT whose subject (user id) is 42. No real token needed. */
     private static RequestPostProcessor user42() {
         return jwt().jwt(token -> token.subject("42"));
     }

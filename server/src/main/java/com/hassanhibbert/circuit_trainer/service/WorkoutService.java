@@ -35,11 +35,6 @@ public class WorkoutService {
         this.htmlSanitizer = htmlSanitizer;
     }
 
-    /**
-     * Not paginated: a user sees the handful of built-ins plus at most MAX_CUSTOM_WORKOUTS of
-     * their own, a small bounded list the app needs in full to draw its home screen.
-     * Sections and exercises are lazy; batch fetching loads them in two extra queries in total.
-     */
     public List<WorkoutResponse> listVisible(Long ownerId) {
         return workoutRepository.findAllVisibleTo(ownerId).stream().map(WorkoutResponse::fromEntity).toList();
     }
@@ -79,18 +74,14 @@ public class WorkoutService {
         workout.setSessionsPerWeek(request.sessionsPerWeek());
         workout.setProgramWeeks(request.programWeeks());
         workout.replaceSections(toSections(request.sections()));
-        // No save() call: the workout is a managed entity, so Hibernate's dirty checking
-        // writes the changes when the transaction commits.
         return WorkoutResponse.fromEntity(workout);
     }
 
-    /** Logged sessions survive: the database sets their workout_id to null (ON DELETE SET NULL). */
     @Transactional
     public void delete(Long id, Long ownerId) {
         workoutRepository.delete(findEditable(id, ownerId));
     }
 
-    /** "Make it mine": copies any visible workout (usually a built-in) into the user's own list. */
     @Transactional
     public WorkoutResponse copy(Long id, Long ownerId) {
         Workout source = findVisible(id, ownerId);
@@ -108,10 +99,6 @@ public class WorkoutService {
         return WorkoutResponse.fromEntity(workoutRepository.save(copy));
     }
 
-    /**
-     * Rules that span several fields, so they can't be a single field annotation. Checked
-     * before touching the database: they depend only on the request.
-     */
     void checkRules(WorkoutRequest request) {
         if ((request.sessionsPerWeek() == null) != (request.programWeeks() == null)) {
             throw new BusinessRuleException("sessionsPerWeek and programWeeks must be given together, or not at all");
@@ -167,10 +154,7 @@ public class WorkoutService {
                 .orElseThrow(() -> new ResourceNotFoundException("Workout", id));
     }
 
-    /**
-     * Another user's workout is a 404 (findVisible never returns it), so ids can't be probed.
-     * A built-in is visible, so pretending it doesn't exist would be confusing: that's a 403.
-     */
+    // other users' workouts are a 404, built-ins are visible so they get a 403
     private Workout findEditable(Long id, Long ownerId) {
         Workout workout = findVisible(id, ownerId);
         if (workout.isBuiltIn()) {

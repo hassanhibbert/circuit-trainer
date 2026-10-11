@@ -92,10 +92,7 @@ public class WeightService {
         weightRepository.delete(getEntity(id, ownerId));
     }
 
-    /**
-     * Not @PastOrPresent: that compares with the server's date (UTC), and for a user east of UTC
-     * "today" can already be "tomorrow" in UTC terms. The furthest-ahead zone is UTC+14, so allow +1 day.
-     */
+    // not @PastOrPresent: server is UTC, so "today" can already be tomorrow there for some users
     private void checkDate(LocalDate measuredOn) {
         if (measuredOn.isAfter(LocalDate.now(clock.withZone(ZoneOffset.UTC)).plusDays(1))) {
             throw new BusinessRuleException("measuredOn can't be in the future");

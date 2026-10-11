@@ -18,8 +18,7 @@ const toStep = (exercise) => ({
   ...splitDuration(exercise.durationSeconds),
 });
 
-// Adapts the API's workout to the shape the timer screens were written for (the old bundled
-// JSON): timed workouts as sections[].units[], manual ones as a flat exercises[] list.
+// map the API shape to what the timer screens expect
 export const toProgram = (workout) => {
   const manual = workout.mode === "MANUAL";
   return {

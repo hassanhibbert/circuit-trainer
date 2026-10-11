@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-/** A body-weight entry. measuredOn is a plain date ("2026-10-03"), weightLb has one decimal place. */
 public record WeightRequest(
         @NotNull LocalDate measuredOn,
         @NotNull @DecimalMin("50.0") @DecimalMax("1000.0") @Digits(integer = 4, fraction = 1) BigDecimal weightLb,

@@ -41,7 +41,6 @@ class AuthServiceTest {
         assertThatThrownBy(() -> service.login(new LoginRequest("ghost", "whatever")))
                 .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("Invalid username or password");
-        // The dummy comparison is what makes "no such user" as slow as "wrong password".
         verify(passwordEncoder).matches("whatever", "dummy-hash");
     }
 

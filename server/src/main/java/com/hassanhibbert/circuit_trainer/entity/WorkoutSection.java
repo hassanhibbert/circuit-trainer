@@ -19,7 +19,6 @@ public class WorkoutSection {
     @Column(name = "position", nullable = false)
     private int position;
 
-    // Display lines joined with '\n' (e.g. "Round 1\nLower Body"). Null for manual workouts.
     @Column(name = "title", length = 200)
     private String title;
 
@@ -38,7 +37,6 @@ public class WorkoutSection {
         }
     }
 
-    // Package-private: only Workout.replaceSections should wire a section to its parent.
     void attachTo(Workout workout, int position) {
         this.workout = workout;
         this.position = position;

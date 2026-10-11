@@ -17,7 +17,6 @@ class WeekCalendarTest {
 
     @Test
     void programWeek_isOneDuringTheWeekOfTheFirstSession() {
-        // Monday 2026-09-28 .. Sunday 2026-10-04
         Instant first = Instant.parse("2026-09-28T12:00:00Z");
 
         assertThat(WeekCalendar.programWeek(first, LocalDate.parse("2026-10-04"), NEW_YORK, 4)).isEqualTo(1);
@@ -34,7 +33,6 @@ class WeekCalendarTest {
 
     @Test
     void programWeek_usesTheUsersTimeZone() {
-        // 02:00 UTC on Monday is still Sunday evening in New York: the previous week.
         Instant sundayNightInNewYork = Instant.parse("2026-09-28T02:00:00Z");
 
         assertThat(WeekCalendar.programWeek(sundayNightInNewYork, LocalDate.parse("2026-09-28"), NEW_YORK, 4))
@@ -48,7 +46,7 @@ class WeekCalendarTest {
         Clock wednesday = Clock.fixed(Instant.parse("2026-09-30T15:00:00Z"), ZoneOffset.UTC);
 
         assertThat(WeekCalendar.startOfThisWeek(wednesday, NEW_YORK))
-                .isEqualTo(Instant.parse("2026-09-28T04:00:00Z")); // 00:00 EDT = 04:00 UTC
+                .isEqualTo(Instant.parse("2026-09-28T04:00:00Z"));
     }
 
     @Test

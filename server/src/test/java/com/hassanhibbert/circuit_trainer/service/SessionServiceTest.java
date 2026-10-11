@@ -50,7 +50,6 @@ class SessionServiceTest {
 
     @BeforeEach
     void setUp() {
-        // A fixed clock makes "now" deterministic: the future-date rule is testable to the second.
         service = new SessionService(sessionRepository, workoutRepository, appUserRepository,
                 Clock.fixed(NOW, ZoneOffset.UTC));
     }
@@ -66,9 +65,9 @@ class SessionServiceTest {
         when(workoutRepository.findAllVisibleTo(USER)).thenReturn(List.of());
 
         ImportResult result = service.importHistory(new ImportRequest(List.of(
-                entry("Beginner HIIT", "2026-09-01T10:00:00Z"),   // already stored
-                entry("Beginner HIIT", "2026-09-03T10:00:00Z"),   // new
-                entry("Beginner HIIT", "2026-09-03T10:00:00Z"))), // repeated in the file
+                entry("Beginner HIIT", "2026-09-01T10:00:00Z"),
+                entry("Beginner HIIT", "2026-09-03T10:00:00Z"),
+                entry("Beginner HIIT", "2026-09-03T10:00:00Z"))),
                 USER);
 
         assertThat(result).isEqualTo(new ImportResult(1, 2));

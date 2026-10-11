@@ -17,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-/** Body-weight log, in pounds, one entry per day. */
 @RestController
 @RequestMapping("/api/v1/weights")
 public class WeightController {

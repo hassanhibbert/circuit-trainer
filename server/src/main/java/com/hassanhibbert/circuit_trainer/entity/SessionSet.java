@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
-/** One set as actually performed: what, how many, how heavy, how long. */
 @Entity
 @Table(name = "session_sets")
 public class SessionSet {
@@ -19,8 +18,6 @@ public class SessionSet {
     @Column(name = "position", nullable = false)
     private int position;
 
-    // A copy of the exercise name, not a foreign key: the log must stay readable after the
-    // workout it came from is edited or deleted.
     @Column(name = "exercise_title", nullable = false, length = 120)
     private String exerciseTitle;
 
@@ -30,7 +27,6 @@ public class SessionSet {
     @Column(name = "reps")
     private Integer reps;
 
-    // BigDecimal, not double: maps exactly onto NUMERIC(5,1), and sums don't drift.
     @Column(name = "weight_lb", precision = 5, scale = 1)
     private BigDecimal weightLb;
 

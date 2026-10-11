@@ -13,10 +13,8 @@ const formatChange = (lb) => {
 };
 
 export const ProgressScreen = ({ stats, refreshStats }) => {
-  // Bumped when history changes elsewhere (restore), so the history list reloads.
   const [historyKey, setHistoryKey] = useState(0);
 
-  // Opening the tab always shows current numbers, whatever happened since the last fetch.
   useEffect(() => {
     refreshStats();
   }, [refreshStats]);

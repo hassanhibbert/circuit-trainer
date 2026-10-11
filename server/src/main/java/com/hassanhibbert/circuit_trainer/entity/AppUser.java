@@ -14,7 +14,6 @@ public class AppUser {
     @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
-    // Only ever a hash. The raw password never touches a field, a log, or the database.
     @Column(name = "password_hash", nullable = false, length = 100)
     private String passwordHash;
 

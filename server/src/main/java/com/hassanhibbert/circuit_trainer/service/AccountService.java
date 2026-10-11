@@ -25,18 +25,13 @@ public class AccountService {
         return new AccountResponse(user.getId(), user.getUsername(), user.getCreatedAt());
     }
 
-    /**
-     * Deletes the user row; ON DELETE CASCADE in the schema removes their workouts, sessions,
-     * sets, weights and goals in the same statement. Their existing tokens still verify until
-     * they expire, but every query is scoped to an owner that no longer exists, so they see nothing.
-     */
     @Transactional
     public void delete(Long userId, String password) {
         AppUser user = getEntity(userId);
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new BadCredentialsException("Password is incorrect");
         }
-        appUserRepository.delete(user);
+        appUserRepository.delete(user); // everything else is removed by on delete cascade
     }
 
     private AppUser getEntity(Long userId) {

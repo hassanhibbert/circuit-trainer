@@ -9,11 +9,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * A composed annotation: one line on a test class bundles the test profile, the database
- * configuration and the "only if a database is available" condition. Both JUnit and Spring
- * look through annotations on annotations ("meta-annotations"), so this just works.
- */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ActiveProfiles("test")

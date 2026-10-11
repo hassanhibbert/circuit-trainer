@@ -10,8 +10,6 @@ const stepKey = (title, setLabel) => `${title}|${setLabel ?? ""}`;
 
 const toNumberOrNull = (value) => (value === "" || value == null ? null : Number(value));
 
-// After "Workout Complete!": one row per performed step, pre-filled with the plan's target reps,
-// hold durations, and the weight used for the same set last time.
 export const SetLogger = ({ program, session, queued, onDone }) => {
   const steps = useMemo(() => {
     const all = program.type === "manual" ? program.exercises : program.sections.flatMap((s) => s.units);
@@ -31,7 +29,7 @@ export const SetLogger = ({ program, session, queued, onDone }) => {
   const [expanded, setExpanded] = useState(program.type === "manual");
   const [saving, setSaving] = useState(false);
 
-  // Pre-fill weights from the previous session of this workout.
+  // prefill weights from the last session
   useEffect(() => {
     if (!session) return;
     let cancelled = false;
@@ -52,7 +50,7 @@ export const SetLogger = ({ program, session, queued, onDone }) => {
         );
       })
       .catch(() => {
-        // pre-fill is a convenience; logging works without it
+        // prefill is optional
       });
     return () => {
       cancelled = true;
@@ -189,7 +187,6 @@ const SetTable = styled.div`
   align-items: center;
 `;
 
-// display: contents lets each row's cells join the parent grid's columns.
 const SetRow = styled.div`
   display: contents;
 `;

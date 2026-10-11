@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/** The signed-in user's own account. */
 @RestController
 @RequestMapping("/api/v1/me")
 public class AccountController {

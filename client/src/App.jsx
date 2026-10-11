@@ -49,7 +49,6 @@ function clearSession() {
   }
 }
 
-// Saved sessions from before the API only have a title; newer ones also have the workout id.
 const findSavedProgram = (programs, saved) =>
   programs?.find((p) => (saved.workoutId != null ? p.id === saved.workoutId : p.title === saved.workoutTitle));
 
@@ -68,7 +67,6 @@ function App() {
           </UserLine>
         )}
       </Header>
-      {/* key: a different user gets a completely fresh component tree, with no leftover state. */}
       {user ? <TrainerApp key={user.username} username={user.username} /> : <LoginScreen />}
     </>
   );
@@ -80,8 +78,7 @@ function TrainerApp({ username }) {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [workoutStarted, setWorkoutStarted] = useState(false);
   const [phase, setPhase] = useState("exercise");
-  // undefined = nothing to log; { saving: true } while the completion is being sent;
-  // then { session, queued } (session is null if the save was queued offline or failed).
+  // undefined | { saving } | { session, queued }
   const [completion, setCompletion] = useState(undefined);
   const [pendingResume, setPendingResume] = useState(readSession);
 
@@ -89,7 +86,6 @@ function TrainerApp({ username }) {
   const { stats, refresh: refreshStats, getStatsFor } = useStats();
   const isManual = selectedProgram?.type === "manual";
 
-  // Sessions that couldn't be saved earlier (offline, server asleep) are sent on start-up.
   useEffect(() => {
     flushOutbox(username).then((sent) => {
       if (sent > 0) {
@@ -99,7 +95,6 @@ function TrainerApp({ username }) {
     });
   }, [username, refreshStats]);
 
-  // A saved in-progress session for a workout that no longer exists can't be resumed.
   const resumeProgram = pendingResume && workouts ? findSavedProgram(workouts, pendingResume) : null;
   useEffect(() => {
     if (pendingResume && workouts && !resumeProgram) {
@@ -151,7 +146,7 @@ function TrainerApp({ username }) {
     if (cueDuration) play(cueDuration);
   }, [phase, breakElapsedSeconds, program?.restSeconds, play]);
 
-  // Saves the completion right away (so it's never lost), then the end screen offers to add sets.
+  // save right away, sets get added after
   const completeWorkout = useCallback(() => {
     release();
     clearSession();
@@ -222,7 +217,6 @@ function TrainerApp({ username }) {
     reset();
     resetBreakStopwatch();
     resetTotalStopwatch();
-    // Sets logged on the end screen change volume and progress; the list should reflect them.
     refreshStats();
   }, [release, reset, resetBreakStopwatch, resetTotalStopwatch, refreshStats]);
 
@@ -351,7 +345,6 @@ function TrainerApp({ username }) {
           ) : (
             <>
               <Blurb as="div">
-                {/* The API sanitizes descriptions against an allowlist before storing them. */}
                 <div dangerouslySetInnerHTML={{ __html: selectedProgram.description ?? "" }} />
               </Blurb>
               <CenterHorizontal>

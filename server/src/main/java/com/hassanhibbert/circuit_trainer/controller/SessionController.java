@@ -20,7 +20,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-/** Completed workouts ("sessions") and the sets logged in them. */
 @RestController
 @RequestMapping("/api/v1/sessions")
 public class SessionController {
@@ -30,7 +29,6 @@ public class SessionController {
         this.sessionService = sessionService;
     }
 
-    /** e.g. GET /api/v1/sessions?workoutId=5&from=2026-09-01T00:00:00Z&page=0&size=20&sort=completedAt,desc */
     @GetMapping
     public PageResponse<SessionResponse> searchSessions(@ParameterObject SessionFilter filter,
                                                         @ParameterObject @PageableDefault(size = 20, sort = "completedAt",
@@ -39,7 +37,6 @@ public class SessionController {
         return sessionService.search(userId, filter, pageable);
     }
 
-    /** Every session with its sets: the "Backup data" download. */
     @GetMapping("/export")
     public List<SessionResponse> exportSessions(@CurrentUserId Long userId) {
         return sessionService.exportAll(userId);
@@ -59,7 +56,6 @@ public class SessionController {
         return ResponseEntity.created(location).body(created);
     }
 
-    /** Imports a backup: this API's export, or the old localStorage format. Duplicates are skipped. */
     @PostMapping("/import")
     public ImportResult importSessions(@Valid @RequestBody ImportRequest request, @CurrentUserId Long userId) {
         return sessionService.importHistory(request, userId);

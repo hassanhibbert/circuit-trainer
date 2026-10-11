@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import { api, errorMessage } from "./api";
 import { PrimaryButton, QuietButton } from "./ui";
 
-// Before accounts existed, history lived only in this browser's localStorage. On first login
-// we offer to upload it once; the server skips anything it already has.
+// one-time import of history saved before accounts existed
 const LEGACY_KEY = "circuit-trainer:history";
 const importedKey = (username) => `circuit-trainer:history-imported:${username}`;
 

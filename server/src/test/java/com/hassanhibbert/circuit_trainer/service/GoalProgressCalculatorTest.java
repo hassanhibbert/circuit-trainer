@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GoalProgressCalculatorTest {
-
     private static BigDecimal lb(String value) {
         return new BigDecimal(value);
     }
@@ -53,7 +52,6 @@ class GoalProgressCalculatorTest {
 
     @Test
     void scaleDifferences_doNotMatter() {
-        // BigDecimal.equals would say 200.0 != 200; the calculator must use compareTo.
         Progress p = GoalProgressCalculator.weight(lb("230.0"), lb("200.00"), lb("200"));
 
         assertThat(p.achieved()).isTrue();

@@ -28,7 +28,6 @@ public class WorkoutExercise {
     @Column(name = "reps", length = 60)
     private String reps;
 
-    // Integer wrappers, not int: "no target" must be representable as null, not 0.
     @Column(name = "target_reps")
     private Integer targetReps;
 

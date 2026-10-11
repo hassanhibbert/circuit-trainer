@@ -14,7 +14,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-/** Goals, each returned with its live progress. "tz" decides which calendar week is "this week". */
 @RestController
 @RequestMapping("/api/v1/goals")
 public class GoalController {

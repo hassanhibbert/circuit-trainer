@@ -1,41 +1,42 @@
 #!/usr/bin/env bash
-# Builds the app and rsyncs dist/ to DreamHost over SSH.
-# Requires .env.deploy.local (copy .env.deploy.local.example and fill it in).
+# build and rsync dist/ to dreamhost
+# settings come from env vars, or .env.deploy.local / .env.production.local
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-ENV_FILE="$PROJECT_ROOT/.env.deploy.local"
 
-if [ ! -f "$ENV_FILE" ]; then
-  echo "Missing $ENV_FILE" >&2
-  echo "Copy .env.deploy.local.example to .env.deploy.local and fill in your DreamHost details." >&2
-  exit 1
-fi
+# parsed instead of sourced so it can't run anything, and never overrides an exported var
+load_env_file() {
+  local file="$1" line key value
+  [ -f "$file" ] || return 0
+  while IFS= read -r line || [ -n "$line" ]; do
+    case "$line" in ''|'#'*) continue ;; esac
+    key="${line%%=*}"
+    value="${line#*=}"
+    if [ "$key" = "$line" ] || [[ ! "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]; then
+      echo "Ignoring a malformed line in $(basename "$file")" >&2
+      continue
+    fi
+    if ! printenv "$key" >/dev/null 2>&1; then
+      export "$key=$value"
+    fi
+  done < "$file"
+}
 
-# shellcheck disable=SC1090
-source "$ENV_FILE"
+load_env_file "$PROJECT_ROOT/.env.deploy.local"
+load_env_file "$PROJECT_ROOT/.env.production.local"
 
-: "${DEPLOY_USER:?Set DEPLOY_USER in .env.deploy.local}"
-: "${DEPLOY_HOST:?Set DEPLOY_HOST in .env.deploy.local}"
-: "${DEPLOY_PATH:?Set DEPLOY_PATH in .env.deploy.local}"
+: "${DEPLOY_USER:?DEPLOY_USER is not set (environment or .env.deploy.local)}"
+: "${DEPLOY_HOST:?DEPLOY_HOST is not set (environment or .env.deploy.local)}"
+: "${DEPLOY_PATH:?DEPLOY_PATH is not set (environment or .env.deploy.local)}"
 
-# The API URL is baked into the bundle at build time (Vite inlines VITE_* variables).
-# Without it the build would silently point at http://localhost:8080.
-if ! grep -qs '^VITE_API_URL=.' "$PROJECT_ROOT/.env.production.local"; then
-  echo "Missing VITE_API_URL in .env.production.local" >&2
-  echo "Copy .env.production.local.example and set your Render API URL." >&2
-  exit 1
-fi
+: "${VITE_API_URL:?VITE_API_URL is not set (environment or .env.production.local)}"
 
 echo "Building..."
 (cd "$PROJECT_ROOT" && yarn build)
 
-# --delete makes the remote folder mirror dist/ exactly, which is what you
-# want for a Vite build (old fingerprinted JS/CSS chunks get cleaned up).
-# Only point DEPLOY_PATH at a directory dedicated to this app -- anything
-# else already in that folder on the server will be removed.
-echo "Uploading dist/ to $DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH ..."
+echo "Uploading dist/ to DreamHost..."
 rsync -avz --delete \
   "$PROJECT_ROOT/dist/" \
   "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"

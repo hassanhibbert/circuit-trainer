@@ -13,7 +13,7 @@ public class Workout {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Nullable on purpose: a null owner marks a built-in workout shared by everyone.
+    // null = built-in workout
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private AppUser owner;
@@ -37,10 +37,6 @@ public class Workout {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    // The workout is the "aggregate root": sections are created, changed and deleted only
-    // through it. cascade = ALL saves/deletes them with the workout; orphanRemoval deletes a
-    // section the moment it is removed from this list, which is what makes "replace all
-    // sections" on update a simple clear() + add().
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position")
     private List<WorkoutSection> sections = new ArrayList<>();
@@ -58,7 +54,6 @@ public class Workout {
         this.createdAt = Instant.now();
     }
 
-    /** Replaces every section, keeping both sides of the relationship and the positions in sync. */
     public void replaceSections(List<WorkoutSection> newSections) {
         sections.clear();
         for (int i = 0; i < newSections.size(); i++) {
@@ -70,7 +65,6 @@ public class Workout {
 
     public boolean isBuiltIn() { return owner == null; }
 
-    /** Comparing ids reads the foreign key only; it does not load the lazy owner from the database. */
     public boolean isOwnedBy(Long userId) { return owner != null && owner.getId().equals(userId); }
 
     public Long getId() { return id; }

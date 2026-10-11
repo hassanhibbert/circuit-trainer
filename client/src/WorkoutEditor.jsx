@@ -31,7 +31,6 @@ const blankSection = () => ({ titleText: "", exercises: [blankExercise()] });
 
 const toText = (value) => (value == null ? "" : String(value));
 
-// Form state uses strings throughout (what inputs hold); toRequest converts back.
 const fromWorkout = (raw) =>
   raw
     ? {

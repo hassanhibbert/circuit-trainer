@@ -21,15 +21,10 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Repository slice against real Postgres, with the schema (and the built-in workouts) created
- * by the real Flyway migrations. Each test runs in a transaction that is rolled back afterwards.
- */
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @UsesDatabase
 class WorkoutRepositoryTest {
-
     @Autowired AppUserRepository users;
     @Autowired WorkoutRepository workouts;
     @Autowired WorkoutSessionRepository sessions;
@@ -79,7 +74,6 @@ class WorkoutRepositoryTest {
         workouts.saveAndFlush(custom(alice, "Leg Day"));
         workouts.saveAndFlush(custom(bob, "Leg Day"));
 
-        // The partial unique index on (owner_id, lower(title)) is the backstop for the service check.
         assertThatThrownBy(() -> workouts.saveAndFlush(custom(alice, "LEG DAY")))
                 .isInstanceOf(DataIntegrityViolationException.class);
     }
@@ -97,7 +91,7 @@ class WorkoutRepositoryTest {
         entityManager.clear();
 
         WorkoutSession reloaded = sessions.findById(session.getId()).orElseThrow();
-        assertThat(reloaded.getWorkout()).isNull();            // ON DELETE SET NULL
-        assertThat(reloaded.getWorkoutTitle()).isEqualTo("Temporary"); // the snapshot survives
+        assertThat(reloaded.getWorkout()).isNull();
+        assertThat(reloaded.getWorkoutTitle()).isEqualTo("Temporary");
     }
 }

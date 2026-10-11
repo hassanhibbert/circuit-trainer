@@ -7,10 +7,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Swagger UI at /swagger-ui.html, raw spec at /v3/api-docs. The bearer scheme adds an
- * "Authorize" button: paste the accessToken from /auth/login and every call sends it.
- */
 @Configuration
 @OpenAPIDefinition(
         info = @Info(title = "Circuit Trainer API", version = "v1",

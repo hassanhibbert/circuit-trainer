@@ -41,13 +41,8 @@ import java.util.Set;
 @Service
 @Transactional(readOnly = true)
 public class SessionService {
-    /** Phones' clocks drift; a completion a minute "in the future" is skew, not an error. */
     static final Duration CLOCK_SKEW_ALLOWANCE = Duration.ofMinutes(5);
 
-    /**
-     * Sorting is client input too. Unchecked, ?sort=owner.passwordHash would be accepted, and the
-     * order of results would leak information about a column the client can't otherwise see.
-     */
     static final Set<String> SORTABLE = Set.of("completedAt", "totalSeconds");
 
     private final WorkoutSessionRepository sessionRepository;
@@ -69,14 +64,10 @@ public class SessionService {
                 throw new InvalidQueryException("Cannot sort by '" + order.getProperty() + "'. Allowed: " + SORTABLE);
             }
         }
-        // Tie-breaker on id: rows with equal sort values otherwise have no defined order,
-        // and the same session can appear on two pages (or none) as the user pages through.
         Pageable stable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 pageable.getSort().and(Sort.by(Sort.Direction.DESC, "id")));
 
-        // Sets are NOT fetch-joined here: a fetch join on a collection plus LIMIT/OFFSET makes
-        // Hibernate load every matching row and page in memory. Instead the page is one query,
-        // and the sets of all sessions on the page come in one batched "in (...)" query.
+        // no fetch join on sets here, it would make hibernate page in memory. batch fetching loads them instead
         Page<WorkoutSession> page = sessionRepository.findAll(SessionSpecifications.matching(ownerId, filter), stable);
         return PageResponse.from(page, SessionResponse::fromEntity);
     }
@@ -85,7 +76,6 @@ public class SessionService {
         return SessionResponse.fromEntity(getEntity(id, ownerId));
     }
 
-    /** Full history, oldest first, in a shape that POST /sessions/import accepts back. */
     public List<SessionResponse> exportAll(Long ownerId) {
         return sessionRepository.findByOwnerIdOrderByCompletedAtAsc(ownerId).stream()
                 .map(SessionResponse::fromEntity).toList();
@@ -106,7 +96,6 @@ public class SessionService {
         return SessionResponse.fromEntity(sessionRepository.save(session));
     }
 
-    /** Full replacement, sets included. This is how the app saves sets logged after the workout. */
     @Transactional
     public SessionResponse update(Long id, SessionRequest request, Long ownerId) {
         WorkoutSession session = getEntity(id, ownerId);
@@ -127,14 +116,8 @@ public class SessionService {
         sessionRepository.delete(getEntity(id, ownerId));
     }
 
-    /**
-     * Idempotent bulk import: an entry whose (title, completedAt) already exists is skipped, so
-     * importing the same backup twice adds nothing. All-or-nothing: one @Transactional method,
-     * so if any row fails, none are kept.
-     */
     @Transactional
     public ImportResult importHistory(ImportRequest request, Long ownerId) {
-        // One query for every existing key, then O(1) lookups, instead of one "exists?" query per entry.
         Set<CompletionKey> seen = new HashSet<>(sessionRepository.findCompletionKeys(ownerId));
         Map<String, Workout> workoutsByTitle = visibleWorkoutsByTitle(ownerId);
         AppUser owner = appUserRepository.getReferenceById(ownerId);
@@ -142,8 +125,6 @@ public class SessionService {
         List<WorkoutSession> toSave = new ArrayList<>();
         for (ImportRequest.Entry entry : request.entries()) {
             String title = entry.workoutTitle().trim();
-            // Set.add returns false if the key was already there: covers duplicates already in the
-            // database and duplicates inside this same file.
             if (!seen.add(new CompletionKey(title, entry.completedAt()))) {
                 continue;
             }
@@ -157,7 +138,6 @@ public class SessionService {
         return new ImportResult(toSave.size(), request.entries().size() - toSave.size());
     }
 
-    /** Titles map to the user's own workout first, then to a built-in with that title. */
     private Map<String, Workout> visibleWorkoutsByTitle(Long ownerId) {
         Map<String, Workout> byTitle = new HashMap<>();
         for (Workout w : workoutRepository.findAllVisibleTo(ownerId)) {
@@ -199,8 +179,6 @@ public class SessionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Session", id));
     }
 
-    // Looking the workout up *as visible to this user* is the IDOR check: someone else's
-    // workoutId is "not found", so nobody can log sessions against another user's workout.
     private Workout findVisibleWorkout(Long id, Long ownerId) {
         return workoutRepository.findVisibleTo(id, ownerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Workout", id));

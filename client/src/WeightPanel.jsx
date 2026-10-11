@@ -34,7 +34,7 @@ export const WeightPanel = ({ onChanged }) => {
     event.preventDefault();
     setSaving(true);
     try {
-      // Logging the same day twice updates that day's entry instead of failing.
+      // same day updates the existing entry
       const existing = entries.find((e) => e.measuredOn === measuredOn);
       const body = { measuredOn, weightLb: Number(weightLb) };
       if (existing) await api.put(`/api/v1/weights/${existing.id}`, body);

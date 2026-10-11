@@ -41,7 +41,6 @@ public class GoalService {
         this.clock = clock;
     }
 
-    /** The current weight and this week's session count are read once, then shared by every goal. */
     public List<GoalResponse> list(Long ownerId, ZoneId zone) {
         ProgressInputs inputs = inputs(ownerId, zone);
         return goalRepository.findByOwnerIdOrderByIdAsc(ownerId).stream()
@@ -70,7 +69,6 @@ public class GoalService {
         Goal goal = getEntity(id, ownerId);
         LocalDate startDate = request.startDate() != null ? request.startDate() : goal.getStartDate();
         checkRules(request, startDate);
-        // Keep the original baseline unless the client sends a new one or the goal changes type.
         BigDecimal startValue = request.startValue() != null || goal.getType() != request.type()
                 ? startValueFor(request, ownerId)
                 : goal.getStartValue();
@@ -93,7 +91,6 @@ public class GoalService {
         }
         if (request.type() == GoalType.SESSIONS_PER_WEEK) {
             BigDecimal target = request.targetValue();
-            // stripTrailingZeros().scale() <= 0 means "a whole number": 3, 3.0 yes; 3.5 no.
             if (target.stripTrailingZeros().scale() > 0 || target.intValue() > MAX_SESSIONS_PER_WEEK) {
                 throw new BusinessRuleException("A sessions-per-week goal must be a whole number from 1 to " + MAX_SESSIONS_PER_WEEK);
             }
@@ -116,7 +113,6 @@ public class GoalService {
     private GoalResponse toResponse(Goal goal, ProgressInputs inputs, Long ownerId) {
         return switch (goal.getType()) {
             case TARGET_WEIGHT -> {
-                // No baseline was known when the goal was set: use the first weigh-in since its start.
                 BigDecimal start = goal.getStartValue() != null ? goal.getStartValue()
                         : weightRepository.findFirstByOwnerIdAndMeasuredOnGreaterThanEqualOrderByMeasuredOnAsc(
                                 ownerId, goal.getStartDate()).map(BodyWeight::getWeightLb).orElse(null);

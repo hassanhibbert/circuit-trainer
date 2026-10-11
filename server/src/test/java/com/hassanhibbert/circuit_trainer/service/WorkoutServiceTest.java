@@ -32,10 +32,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Plain unit test: no Spring context, repositories are Mockito mocks. Fast, and it pins down
- * the business rules (ownership, read-only built-ins, naming) independently of the database.
- */
 @ExtendWith(MockitoExtension.class)
 class WorkoutServiceTest {
     private static final long USER = 42L;
@@ -46,7 +42,6 @@ class WorkoutServiceTest {
 
     @BeforeEach
     void setUp() {
-        // A real sanitizer: it's a pure function, so there's nothing to gain by mocking it.
         service = new WorkoutService(workoutRepository, appUserRepository, new HtmlSanitizer());
     }
 
@@ -111,7 +106,6 @@ class WorkoutServiceTest {
 
     @Test
     void someoneElsesWorkout_isNotFound() {
-        // The repository query is owner-scoped, so another user's workout simply isn't returned.
         when(workoutRepository.findVisibleTo(99L, USER)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.get(99L, USER)).isInstanceOf(ResourceNotFoundException.class);
@@ -123,7 +117,6 @@ class WorkoutServiceTest {
         when(workoutRepository.existsByOwnerIdAndTitleIgnoreCase(eq(USER), anyString())).thenReturn(false);
         when(workoutRepository.existsByOwnerIdAndTitleIgnoreCase(USER, "Kettlebell Month 1 (copy)")).thenReturn(true);
         when(workoutRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
-        // An unstubbed mock returns null, which would make the copy look owner-less (built-in).
         when(appUserRepository.getReferenceById(USER)).thenReturn(new AppUser("me", "x"));
 
         WorkoutResponse copy = service.copy(1L, USER);

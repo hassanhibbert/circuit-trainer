@@ -17,7 +17,6 @@ public class BodyWeight {
     @JoinColumn(name = "owner_id", nullable = false)
     private AppUser owner;
 
-    // LocalDate maps to a DATE column: a day on the calendar, with no time or zone attached.
     @Column(name = "measured_on", nullable = false)
     private LocalDate measuredOn;
 
