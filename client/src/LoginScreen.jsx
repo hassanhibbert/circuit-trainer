@@ -2,7 +2,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "./AuthContext";
 import { errorMessage } from "./api";
-import { Card, Input, Label, Muted, PrimaryButton, ACCENT } from "./ui";
+import { Card, Input, Label, Muted, PrimaryButton } from "./ui";
+import trainerIcon from "./assets/trainer_icon.png";
 
 export const LoginScreen = () => {
   const { login, register } = useAuth();
@@ -33,6 +34,11 @@ export const LoginScreen = () => {
 
   return (
     <Narrow>
+      <Hero>
+        <img src={trainerIcon} alt="" />
+        <h1>Circuit Trainer</h1>
+        <Muted>Workouts, sets and progress in one place.</Muted>
+      </Hero>
       <Card as="form" onSubmit={handleSubmit}>
         <Heading>{isRegister ? "Create an account" : "Log in"}</Heading>
         <Fields>
@@ -59,7 +65,7 @@ export const LoginScreen = () => {
           </Label>
           {isRegister && <Muted>At least 8 characters.</Muted>}
           {error && <ErrorText role="alert">{error}</ErrorText>}
-          <PrimaryButton type="submit" disabled={submitting}>
+          <PrimaryButton $size="lg" $block type="submit" disabled={submitting}>
             {submitting ? "Please wait…" : isRegister ? "Create account" : "Log in"}
           </PrimaryButton>
         </Fields>
@@ -72,32 +78,53 @@ export const LoginScreen = () => {
 };
 
 const Narrow = styled.div`
-  max-width: 360px;
+  max-width: 380px;
   margin: 0 auto;
+  padding: calc(48px + env(safe-area-inset-top)) 0 48px;
+`;
+
+const Hero = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+
+  img {
+    width: 72px;
+    height: 72px;
+  }
+
+  h1 {
+    font-family: "Revalia", sans-serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    margin-top: 8px;
+  }
 `;
 
 const Heading = styled.h2`
-  color: ${ACCENT};
-  margin: 0 0 16px;
-  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 18px;
 `;
 
 const Fields = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 `;
 
 const ErrorText = styled.p`
-  color: #e7a0a0;
-  margin: 0;
+  color: var(--danger);
 `;
 
 const Switch = styled.button`
   background: none;
   border: none;
-  color: ${ACCENT};
-  margin-top: 12px;
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 16px;
   width: 100%;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 `;

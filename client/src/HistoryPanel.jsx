@@ -48,15 +48,21 @@ export const HistoryPanel = ({ refreshKey, onChanged }) => {
         {sessions.map((session) => (
           <li key={session.id}>
             <Summary onClick={() => setOpenId(openId === session.id ? null : session.id)} aria-expanded={openId === session.id}>
-              <span>
+              <SummaryTop>
                 <strong>{session.workoutTitle}</strong>
                 <Muted as="span">
-                  {" "}
-                  · {new Date(session.completedAt).toLocaleDateString()} · {formatDuration(session.totalSeconds)}
-                  {session.sets.length > 0 && ` · ${session.sets.length} sets`}
-                  {Number(session.volumeLb) > 0 && ` · ${Number(session.volumeLb).toLocaleString()} lb volume`}
+                  {new Date(session.completedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                 </Muted>
-              </span>
+              </SummaryTop>
+              <Muted as="span">
+                {[
+                  formatDuration(session.totalSeconds),
+                  session.sets.length > 0 && `${session.sets.length} sets`,
+                  Number(session.volumeLb) > 0 && `${Number(session.volumeLb).toLocaleString()} lb volume`,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </Muted>
             </Summary>
             {openId === session.id && (
               <Details>
@@ -87,19 +93,26 @@ const List = styled.ul`
   margin: 0 0 8px;
 
   li {
-    border-bottom: 1px solid #4d4d4d;
+    border-bottom: 1px solid var(--border);
   }
 `;
 
 const Summary = styled.button`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   background: none;
   border: none;
-  border-radius: 0;
   width: 100%;
   text-align: left;
-  padding: 8px 0;
-  color: inherit;
-  font-family: inherit;
+  padding: 12px 0;
+`;
+
+const SummaryTop = styled.span`
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
 `;
 
 const Details = styled.div`

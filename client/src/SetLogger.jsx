@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import { api, errorMessage } from "./api";
-import { ACCENT, Input, Muted, PrimaryButton, QuietButton, TextArea, MUTED } from "./ui";
+import { ACCENT, Button, Card, CardTitle, Input, Label, Muted, TextArea, MUTED } from "./ui";
 
 const isRestStep = (step) => /^(rest|get ready)\b/i.test(step.title?.trim() ?? "");
 
@@ -92,92 +92,107 @@ export const SetLogger = ({ program, session, queued, onDone }) => {
 
   if (!session) {
     return (
-      <Wrapper>
+      <Card>
         <Muted>
           {queued
             ? "Couldn't reach the server, so this workout was saved on this device. It will sync next time the app opens."
             : "This workout couldn't be saved."}
         </Muted>
-        <PrimaryButton onClick={onDone}>Return to Workouts</PrimaryButton>
-      </Wrapper>
+        <Footer>
+          <Button $variant="primary" $size="lg" $block onClick={onDone}>
+            Back to workouts
+          </Button>
+        </Footer>
+      </Card>
     );
   }
 
   return (
-    <Wrapper>
-      {!expanded ? (
-        <QuietButton onClick={() => setExpanded(true)}>Log reps &amp; weights</QuietButton>
-      ) : (
-        <>
-          <Muted>Adjust what you actually did. Empty rows are skipped.</Muted>
-          <SetTable>
-            <HeaderCell>Exercise</HeaderCell>
-            <HeaderCell>Reps</HeaderCell>
-            <HeaderCell>lb</HeaderCell>
-            <HeaderCell>Sec</HeaderCell>
-            {rows.map((row, index) => (
-              <SetRow key={index}>
-                <ExerciseCell>
-                  {row.exerciseTitle}
-                  {row.setLabel && <SetLabel>{row.setLabel}</SetLabel>}
-                </ExerciseCell>
-                <SmallInput
-                  type="number"
-                  inputMode="numeric"
-                  min="0"
-                  max="1000"
-                  aria-label={`${row.exerciseTitle} reps`}
-                  value={row.reps}
-                  onChange={(e) => updateRow(index, "reps", e.target.value)}
-                />
-                <SmallInput
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  max="2000"
-                  step="0.5"
-                  aria-label={`${row.exerciseTitle} weight in pounds`}
-                  value={row.weightLb}
-                  onChange={(e) => updateRow(index, "weightLb", e.target.value)}
-                />
-                <SmallInput
-                  type="number"
-                  inputMode="numeric"
-                  min="0"
-                  aria-label={`${row.exerciseTitle} seconds`}
-                  value={row.durationSeconds}
-                  onChange={(e) => updateRow(index, "durationSeconds", e.target.value)}
-                />
-              </SetRow>
-            ))}
-          </SetTable>
-        </>
-      )}
-      <TextArea
-        placeholder="Notes (optional): how did it feel?"
-        value={notes}
-        maxLength={2000}
-        onChange={(e) => setNotes(e.target.value)}
-      />
-      <Buttons>
-        <QuietButton onClick={onDone} disabled={saving}>
+    <>
+      <Card>
+        {!expanded ? (
+          <Button $block onClick={() => setExpanded(true)}>
+            Log reps &amp; weights
+          </Button>
+        ) : (
+          <>
+            <CardTitle>What you did</CardTitle>
+            <Muted style={{ marginBottom: 12 }}>Change anything that was different. Empty rows are skipped.</Muted>
+            <SetTable>
+              <HeaderCell>Exercise</HeaderCell>
+              <HeaderCell>Reps</HeaderCell>
+              <HeaderCell>lb</HeaderCell>
+              <HeaderCell>Sec</HeaderCell>
+              {rows.map((row, index) => (
+                <SetRow key={index}>
+                  <ExerciseCell>
+                    {row.exerciseTitle}
+                    {row.setLabel && <SetLabel>{row.setLabel}</SetLabel>}
+                  </ExerciseCell>
+                  <SmallInput
+                    type="number"
+                    inputMode="numeric"
+                    min="0"
+                    max="1000"
+                    aria-label={`${row.exerciseTitle} reps`}
+                    value={row.reps}
+                    onChange={(e) => updateRow(index, "reps", e.target.value)}
+                  />
+                  <SmallInput
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    max="2000"
+                    step="0.5"
+                    aria-label={`${row.exerciseTitle} weight in pounds`}
+                    value={row.weightLb}
+                    onChange={(e) => updateRow(index, "weightLb", e.target.value)}
+                  />
+                  <SmallInput
+                    type="number"
+                    inputMode="numeric"
+                    min="0"
+                    aria-label={`${row.exerciseTitle} seconds`}
+                    value={row.durationSeconds}
+                    onChange={(e) => updateRow(index, "durationSeconds", e.target.value)}
+                  />
+                </SetRow>
+              ))}
+            </SetTable>
+          </>
+        )}
+      </Card>
+      <Card>
+        <Label>
+          Notes
+          <TextArea
+            placeholder="How did it feel?"
+            value={notes}
+            maxLength={2000}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </Label>
+      </Card>
+      <Footer>
+        <Button $variant="ghost" $size="lg" onClick={onDone} disabled={saving}>
           Skip
-        </QuietButton>
-        <PrimaryButton onClick={handleSave} disabled={saving}>
-          {saving ? "Saving…" : "Save"}
-        </PrimaryButton>
-      </Buttons>
-    </Wrapper>
+        </Button>
+        <Button $variant="primary" $size="lg" onClick={handleSave} disabled={saving} style={{ flex: 1 }}>
+          {saving ? "Saving…" : "Save workout"}
+        </Button>
+      </Footer>
+    </>
   );
 };
 
-const Wrapper = styled.div`
+const Footer = styled.div`
+  position: sticky;
+  bottom: 0;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
-  text-align: left;
-  font-family: "Source Sans 3", sans-serif;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, transparent, var(--bg) 30%);
 `;
 
 const SetTable = styled.div`
@@ -220,7 +235,3 @@ const SmallInput = styled(Input)`
   }
 `;
 
-const Buttons = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;

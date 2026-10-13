@@ -2,20 +2,8 @@ import { useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import { errorMessage } from "./api";
-import {
-  Card,
-  CardTitle,
-  DangerButton,
-  Input,
-  Label,
-  Muted,
-  PrimaryButton,
-  QuietButton,
-  Row,
-  Select,
-  TextArea,
-  MUTED,
-} from "./ui";
+import { Button, Card, CardTitle, Input, Label, Muted, PageTitle, TextArea } from "./ui";
+import { BackIcon, PlusIcon } from "./icons";
 
 const blankExercise = () => ({
   title: "",
@@ -96,6 +84,15 @@ export const WorkoutEditor = ({ program, onSave, onCancel }) => {
   const updateSection = (si, update) =>
     setForm((f) => ({ ...f, sections: f.sections.map((s, i) => (i === si ? update(s) : s)) }));
 
+  const updateExercises = (si, update) => updateSection(si, (s) => ({ ...s, exercises: update(s.exercises) }));
+
+  const moveExercise = (si, ei, delta) =>
+    updateExercises(si, (list) => {
+      const next = [...list];
+      [next[ei], next[ei + delta]] = [next[ei + delta], next[ei]];
+      return next;
+    });
+
   const updateExercise = (si, ei, field, value) =>
     updateSection(si, (s) => ({
       ...s,
@@ -114,188 +111,332 @@ export const WorkoutEditor = ({ program, onSave, onCancel }) => {
     }
   };
 
+  const field = (si, ei, name, label, props = {}) => (
+    <Label>
+      {label}
+      <Input
+        value={form.sections[si].exercises[ei][name]}
+        onChange={(e) => updateExercise(si, ei, name, e.target.value)}
+        {...props}
+      />
+    </Label>
+  );
+
   return (
-    <Card as="form" onSubmit={handleSubmit}>
-      <CardTitle>{program ? "Edit workout" : "New workout"}</CardTitle>
-      <Stack>
-        <Label>
-          Title
-          <Input value={form.title} maxLength={120} onChange={(e) => set("title", e.target.value)} required />
-        </Label>
-        <Label>
-          Description (basic HTML allowed: p, strong, em, lists)
-          <TextArea value={form.description} maxLength={4000} onChange={(e) => set("description", e.target.value)} />
-        </Label>
-        <Row>
-          <Label>
-            Mode
-            <Select value={form.mode} onChange={(e) => set("mode", e.target.value)}>
-              <option value="MANUAL">Manual: tap through sets at your own pace</option>
-              <option value="TIMED">Timed: auto-advancing countdowns</option>
-            </Select>
+    <form onSubmit={handleSubmit}>
+      <TopBar>
+        <Button type="button" $variant="ghost" $size="sm" onClick={onCancel}>
+          <BackIcon size={16} /> Cancel
+        </Button>
+      </TopBar>
+      <PageTitle>{program ? "Edit workout" : "New workout"}</PageTitle>
+
+      <Card>
+        <Fields>
+          <Label className="wide">
+            Name
+            <Input value={form.title} maxLength={120} onChange={(e) => set("title", e.target.value)} required />
           </Label>
-        </Row>
-        <Checkbox>
-          <input type="checkbox" checked={form.isProgram} onChange={(e) => set("isProgram", e.target.checked)} />
-          Multi-week program (shows &ldquo;Week X of N&rdquo;)
-        </Checkbox>
-        {form.isProgram && (
-          <Row>
-            <Label>
-              Sessions / week
-              <Input type="number" min="1" max="14" value={form.sessionsPerWeek} onChange={(e) => set("sessionsPerWeek", e.target.value)} style={{ width: "6em" }} />
-            </Label>
-            <Label>
-              Weeks
-              <Input type="number" min="1" max="52" value={form.programWeeks} onChange={(e) => set("programWeeks", e.target.value)} style={{ width: "6em" }} />
-            </Label>
-          </Row>
-        )}
-
-        {form.sections.map((section, si) => (
-          <Section key={si}>
-            <SectionHeader>
-              <Label style={{ flex: 1 }}>
-                Section {si + 1} title (optional, one line per row)
-                <TextArea
-                  rows={2}
-                  value={section.titleText}
-                  onChange={(e) => updateSection(si, (s) => ({ ...s, titleText: e.target.value }))}
-                  style={{ minHeight: 0 }}
-                />
+          <Label className="wide">
+            Description
+            <TextArea
+              value={form.description}
+              maxLength={4000}
+              placeholder="Optional. Basic formatting like <strong> and lists works."
+              onChange={(e) => set("description", e.target.value)}
+            />
+          </Label>
+          <div className="wide">
+            <FieldLabel>Type</FieldLabel>
+            <Segmented role="radiogroup">
+              {[
+                ["MANUAL", "Self-paced", "Tap through sets, rest timer between"],
+                ["TIMED", "Timed", "Countdowns that move on by themselves"],
+              ].map(([value, name, hint]) => (
+                <SegmentButton
+                  key={value}
+                  type="button"
+                  role="radio"
+                  aria-checked={form.mode === value}
+                  $active={form.mode === value}
+                  onClick={() => set("mode", value)}
+                >
+                  <strong>{name}</strong>
+                  <span>{hint}</span>
+                </SegmentButton>
+              ))}
+            </Segmented>
+          </div>
+          <Checkbox className="wide">
+            <input type="checkbox" checked={form.isProgram} onChange={(e) => set("isProgram", e.target.checked)} />
+            Multi-week program (shows &ldquo;Week 2 of 4&rdquo;)
+          </Checkbox>
+          {form.isProgram && (
+            <>
+              <Label>
+                Sessions per week
+                <Input type="number" min="1" max="14" value={form.sessionsPerWeek} onChange={(e) => set("sessionsPerWeek", e.target.value)} />
               </Label>
-              {form.sections.length > 1 && (
-                <DangerButton type="button" onClick={() => setForm((f) => ({ ...f, sections: f.sections.filter((_, i) => i !== si) }))}>
-                  Remove section
-                </DangerButton>
-              )}
-            </SectionHeader>
+              <Label>
+                Weeks
+                <Input type="number" min="1" max="52" value={form.programWeeks} onChange={(e) => set("programWeeks", e.target.value)} />
+              </Label>
+            </>
+          )}
+        </Fields>
+      </Card>
 
-            {section.exercises.map((exercise, ei) => (
-              <Exercise key={ei}>
-                <Row>
-                  <Label style={{ flex: 2, minWidth: 160 }}>
-                    Exercise
-                    <Input value={exercise.title} maxLength={120} onChange={(e) => updateExercise(si, ei, "title", e.target.value)} required />
-                  </Label>
-                  {timed ? (
-                    <Label>
-                      Seconds
-                      <Input type="number" min="1" max="3600" value={exercise.durationSeconds} onChange={(e) => updateExercise(si, ei, "durationSeconds", e.target.value)} required style={{ width: "5em" }} />
-                    </Label>
-                  ) : (
-                    <>
-                      <Label>
-                        Set label
-                        <Input value={exercise.setLabel} maxLength={60} placeholder="Set 1 of 3" onChange={(e) => updateExercise(si, ei, "setLabel", e.target.value)} style={{ width: "8em" }} />
-                      </Label>
-                      <Label>
-                        Reps (text)
-                        <Input value={exercise.reps} maxLength={60} placeholder="8-10 reps" onChange={(e) => updateExercise(si, ei, "reps", e.target.value)} style={{ width: "7em" }} />
-                      </Label>
-                      <Label>
-                        Target reps
-                        <Input type="number" min="1" max="1000" value={exercise.targetReps} onChange={(e) => updateExercise(si, ei, "targetReps", e.target.value)} style={{ width: "5em" }} />
-                      </Label>
-                      <Label>
-                        Rest (s)
-                        <Input type="number" min="0" max="3600" value={exercise.restSeconds} onChange={(e) => updateExercise(si, ei, "restSeconds", e.target.value)} style={{ width: "5em" }} />
-                      </Label>
-                      <Label>
-                        Hold (s)
-                        <Input type="number" min="1" max="3600" value={exercise.durationSeconds} onChange={(e) => updateExercise(si, ei, "durationSeconds", e.target.value)} style={{ width: "5em" }} />
-                      </Label>
-                    </>
-                  )}
-                </Row>
-                <Row>
-                  <Label style={{ flex: 1 }}>
-                    Note (optional)
-                    <Input value={exercise.modifier} maxLength={200} placeholder="e.g. knees down if needed" onChange={(e) => updateExercise(si, ei, "modifier", e.target.value)} />
-                  </Label>
-                  <QuietButton
-                    type="button"
-                    onClick={() => updateSection(si, (s) => ({ ...s, exercises: [...s.exercises.slice(0, ei + 1), { ...exercise }, ...s.exercises.slice(ei + 1)] }))}
-                  >
-                    Duplicate
-                  </QuietButton>
-                  {section.exercises.length > 1 && (
-                    <DangerButton type="button" onClick={() => updateSection(si, (s) => ({ ...s, exercises: s.exercises.filter((_, i) => i !== ei) }))}>
-                      Remove
-                    </DangerButton>
-                  )}
-                </Row>
-              </Exercise>
-            ))}
-            <QuietButton type="button" onClick={() => updateSection(si, (s) => ({ ...s, exercises: [...s.exercises, blankExercise()] }))}>
-              + Exercise
-            </QuietButton>
-          </Section>
-        ))}
-        <QuietButton type="button" onClick={() => setForm((f) => ({ ...f, sections: [...f.sections, blankSection()] }))}>
-          + Section
-        </QuietButton>
-        {timed && <Muted>Tip: add steps titled &ldquo;Rest&rdquo; for timed rest periods.</Muted>}
-        <Buttons>
-          <QuietButton type="button" onClick={onCancel} disabled={saving}>
-            Cancel
-          </QuietButton>
-          <PrimaryButton type="submit" disabled={saving}>
-            {saving ? "Saving…" : "Save workout"}
-          </PrimaryButton>
-        </Buttons>
-      </Stack>
-    </Card>
+      {form.sections.map((section, si) => (
+        <Card key={si}>
+          <SectionHeader>
+            <CardTitle>Section {si + 1}</CardTitle>
+            {form.sections.length > 1 && (
+              <TextButton
+                type="button"
+                $danger
+                onClick={() => setForm((f) => ({ ...f, sections: f.sections.filter((_, i) => i !== si) }))}
+              >
+                Remove section
+              </TextButton>
+            )}
+          </SectionHeader>
+          <Label>
+            Title (optional, one line per row)
+            <TextArea
+              rows={2}
+              value={section.titleText}
+              placeholder={"Round 1\nLower body"}
+              onChange={(e) => updateSection(si, (s) => ({ ...s, titleText: e.target.value }))}
+              style={{ minHeight: 0 }}
+            />
+          </Label>
+
+          {section.exercises.map((exercise, ei) => (
+            <Exercise key={ei}>
+              <ExerciseHeader>
+                <StepNumber>{ei + 1}</StepNumber>
+                <Input
+                  aria-label="Exercise name"
+                  placeholder="Exercise name"
+                  value={exercise.title}
+                  maxLength={120}
+                  onChange={(e) => updateExercise(si, ei, "title", e.target.value)}
+                  required
+                />
+              </ExerciseHeader>
+              <Fields>
+                {timed ? (
+                  <>
+                    {field(si, ei, "durationSeconds", "Seconds", { type: "number", min: 1, max: 3600, required: true })}
+                    {field(si, ei, "modifier", "Note", { maxLength: 200, placeholder: "e.g. knees down" })}
+                  </>
+                ) : (
+                  <>
+                    {field(si, ei, "setLabel", "Set label", { maxLength: 60, placeholder: "Set 1 of 3" })}
+                    {field(si, ei, "reps", "Reps", { maxLength: 60, placeholder: "8-10 reps" })}
+                    {field(si, ei, "targetReps", "Target reps", { type: "number", min: 1, max: 1000, inputMode: "numeric" })}
+                    {field(si, ei, "restSeconds", "Rest (sec)", { type: "number", min: 0, max: 3600, inputMode: "numeric" })}
+                    {field(si, ei, "durationSeconds", "Hold (sec)", { type: "number", min: 1, max: 3600, inputMode: "numeric" })}
+                    {field(si, ei, "modifier", "Note", { maxLength: 200, placeholder: "e.g. light, focus on form" })}
+                  </>
+                )}
+              </Fields>
+              <ExerciseActions>
+                <TextButton type="button" disabled={ei === 0} onClick={() => moveExercise(si, ei, -1)}>
+                  Move up
+                </TextButton>
+                <TextButton type="button" disabled={ei === section.exercises.length - 1} onClick={() => moveExercise(si, ei, 1)}>
+                  Move down
+                </TextButton>
+                <TextButton
+                  type="button"
+                  onClick={() => updateExercises(si, (list) => [...list.slice(0, ei + 1), { ...exercise }, ...list.slice(ei + 1)])}
+                >
+                  Duplicate
+                </TextButton>
+                {section.exercises.length > 1 && (
+                  <TextButton type="button" $danger onClick={() => updateExercises(si, (list) => list.filter((_, i) => i !== ei))}>
+                    Remove
+                  </TextButton>
+                )}
+              </ExerciseActions>
+            </Exercise>
+          ))}
+          <AddButton type="button" onClick={() => updateExercises(si, (list) => [...list, blankExercise()])}>
+            <PlusIcon size={16} /> Add exercise
+          </AddButton>
+        </Card>
+      ))}
+
+      <AddButton type="button" style={{ marginTop: 16 }} onClick={() => setForm((f) => ({ ...f, sections: [...f.sections, blankSection()] }))}>
+        <PlusIcon size={16} /> Add section
+      </AddButton>
+      {timed && <Muted style={{ marginTop: 12 }}>Tip: add steps called &ldquo;Rest&rdquo; for timed rest periods.</Muted>}
+
+      <Footer>
+        <Button type="button" $variant="ghost" $size="lg" onClick={onCancel} disabled={saving}>
+          Cancel
+        </Button>
+        <Button type="submit" $variant="primary" $size="lg" disabled={saving} style={{ flex: 1 }}>
+          {saving ? "Saving…" : "Save workout"}
+        </Button>
+      </Footer>
+    </form>
   );
 };
 
-const Stack = styled.div`
+const TopBar = styled.div`
+  padding-top: 8px;
+`;
+
+const Fields = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  .wide {
+    grid-column: 1 / -1;
+  }
+`;
+
+const FieldLabel = styled.div`
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+`;
+
+const Segmented = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+`;
+
+const SegmentButton = styled.button`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  align-items: stretch;
+  gap: 2px;
+  text-align: left;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid ${(p) => (p.$active ? "var(--accent)" : "var(--border)")};
+  background: ${(p) => (p.$active ? "var(--accent-soft)" : "var(--surface-2)")};
+
+  strong {
+    color: ${(p) => (p.$active ? "var(--accent)" : "var(--text)")};
+  }
+
+  span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
 `;
 
 const Checkbox = styled.label`
   display: flex;
-  gap: 8px;
-  align-items: center;
-  color: ${MUTED};
-`;
-
-const Section = styled.div`
-  border: 1px solid #5f5e5a;
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
   gap: 10px;
-  align-items: flex-start;
+  align-items: center;
+  color: var(--text);
 
-  > * {
-    align-self: stretch;
-  }
-  > button {
-    align-self: flex-start;
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
   }
 `;
 
 const SectionHeader = styled.div`
   display: flex;
-  gap: 10px;
-  align-items: flex-end;
+  justify-content: space-between;
+  align-items: baseline;
 `;
 
 const Exercise = styled.div`
-  background: #383838;
-  border-radius: 6px;
-  padding: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 `;
 
-const Buttons = styled.div`
+const ExerciseHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+`;
+
+const StepNumber = styled.span`
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.85rem;
+`;
+
+const ExerciseActions = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: -4px -8px 0;
+`;
+
+const TextButton = styled.button`
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: ${(p) => (p.$danger ? "var(--danger)" : "var(--muted)")};
+
+  &:hover:not(:disabled) {
+    background: var(--surface-2);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+`;
+
+const AddButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border);
+  background: none;
+  color: var(--muted);
+  font-weight: 700;
+
+  &:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+`;
+
+const Footer = styled.div`
+  position: sticky;
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 16px 0;
+  background: linear-gradient(to bottom, transparent, var(--bg) 30%);
+
+  @media (min-width: 768px) {
+    bottom: 0;
+  }
 `;

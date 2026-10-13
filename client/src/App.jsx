@@ -15,9 +15,12 @@ import { SetLogger } from "./SetLogger";
 import { WorkoutEditor } from "./WorkoutEditor";
 import { flushOutbox, recordSession } from "./sessionSync";
 import { errorMessage } from "./api";
-import { getFormattedCountdown, getCueDuration } from "./utils";
-import { ACCENT, Muted, QuietButton, DangerButton } from "./ui";
-import trainerIcon from "./assets/trainer_icon.png";
+import { getCueDuration } from "./utils";
+import { Button, Muted, Page } from "./ui";
+import { Shell } from "./Shell";
+import { WorkoutList } from "./WorkoutList";
+import { WorkoutDetail } from "./WorkoutDetail";
+import { CompleteScreen, WorkoutScreen } from "./WorkoutScreen";
 import styled from "styled-components";
 import { ToastContainer, toast } from "react-toastify";
 import { useWakeLock } from "./useWakeLock";
@@ -57,22 +60,13 @@ function App() {
 
   return (
     <>
-      <ToastContainer theme="dark" />
-      <Header>
-        <CircuitTrainerLogo src={trainerIcon} className="logo" alt="Circuit Trainer Logo" />
-        <CircuitTrainerText>Circuit Trainer</CircuitTrainerText>
-        {user && (
-          <UserLine>
-            {user.username} · <LinkButton onClick={logout}>Log out</LinkButton>
-          </UserLine>
-        )}
-      </Header>
-      {user ? <TrainerApp key={user.username} username={user.username} /> : <LoginScreen />}
+      <ToastContainer theme="dark" position="top-center" autoClose={3000} />
+      {user ? <TrainerApp key={user.username} username={user.username} onLogout={logout} /> : <LoginScreen />}
     </>
   );
 }
 
-function TrainerApp({ username }) {
+function TrainerApp({ username, onLogout }) {
   const [view, setView] = useState("workouts");
   const [editingProgram, setEditingProgram] = useState(null);
   const [selectedProgram, setSelectedProgram] = useState(null);
@@ -268,385 +262,169 @@ function TrainerApp({ username }) {
     setView("workouts");
   };
 
-  const showSectionTitle = workoutStarted && !isManual && phase !== "end";
+  const handleEndWorkout = () => {
+    if (window.confirm("End this workout? It won't be saved.")) handleResetWorkout();
+  };
+
+  if (selectedProgram && workoutStarted && phase === "end") {
+    return (
+      <CompleteScreen title={selectedProgram.title} totalSeconds={totalElapsedSeconds}>
+        {completion?.saving ? (
+          <Muted style={{ textAlign: "center", marginTop: 16 }}>Saving…</Muted>
+        ) : (
+          completion && (
+            <SetLogger
+              program={selectedProgram}
+              session={completion.session}
+              queued={completion.queued}
+              onDone={handleReturnToList}
+            />
+          )
+        )}
+      </CompleteScreen>
+    );
+  }
+
+  if (selectedProgram && workoutStarted) {
+    const upcoming = getNextWorkout();
+    return (
+      <WorkoutScreen
+        title={selectedProgram.title}
+        sectionLines={isManual ? null : sectionMapping[program.sectionId]}
+        position={position}
+        total={steps.length}
+        nextTitle={upcoming && [upcoming.title, upcoming.setLabel].filter(Boolean).join(" · ")}
+        onEnd={handleEndWorkout}
+      >
+        {isManual ? (
+          <ManualCircuitTimer
+            key={position}
+            phase={phase}
+            title={program?.title}
+            setLabel={program?.setLabel}
+            reps={program?.reps}
+            modifier={program?.modifier}
+            restTargetSeconds={program?.restSeconds}
+            breakElapsedSeconds={breakElapsedSeconds}
+            isLastExercise={last}
+            holdMinutes={program?.minutes}
+            holdSeconds={program?.seconds}
+            onFinishExercise={handleFinishExercise}
+            onNextWorkout={handleNextWorkout}
+          />
+        ) : (
+          <CircutTimer
+            key={position}
+            modifier={program?.modifier}
+            title={program?.title}
+            seconds={program?.seconds}
+            minutes={program?.minutes}
+            onComplete={handleWorkoutComplete}
+          />
+        )}
+      </WorkoutScreen>
+    );
+  }
 
   if (selectedProgram) {
     return (
-      <>
-        <WorkoutContainer>
-          <CenterHorizontal>
-            <WorkoutTitle>
-              {showSectionTitle ? (
-                <>
-                  {(sectionMapping[program.sectionId] ?? []).map((text) => (
-                    <div key={text}>
-                      <span>{text}</span>
-                      <br />
-                    </div>
-                  ))}
-                </>
-              ) : (
-                selectedProgram.title
-              )}
-            </WorkoutTitle>
-          </CenterHorizontal>
-
-          <Divider />
-
-          {workoutStarted ? (
-            phase === "end" ? (
-              <EndSummary>
-                <WorkoutTitle>Workout Complete!</WorkoutTitle>
-                <TotalTimeText>
-                  Total Time:{" "}
-                  <strong>
-                    {getFormattedCountdown(Math.floor(totalElapsedSeconds / 60), totalElapsedSeconds % 60)}
-                  </strong>
-                </TotalTimeText>
-                {completion?.saving ? (
-                  <Muted>Saving…</Muted>
-                ) : (
-                  completion && (
-                    <SetLogger
-                      program={selectedProgram}
-                      session={completion.session}
-                      queued={completion.queued}
-                      onDone={handleReturnToList}
-                    />
-                  )
-                )}
-              </EndSummary>
-            ) : isManual ? (
-              <ManualCircuitTimer
-                key={position}
-                phase={phase}
-                title={program?.title}
-                setLabel={program?.setLabel}
-                reps={program?.reps}
-                modifier={program?.modifier}
-                restTargetSeconds={program?.restSeconds}
-                breakElapsedSeconds={breakElapsedSeconds}
-                isLastExercise={last}
-                holdMinutes={program?.minutes}
-                holdSeconds={program?.seconds}
-                onFinishExercise={handleFinishExercise}
-                onNextWorkout={handleNextWorkout}
-              />
-            ) : (
-              <CircutTimer
-                key={position}
-                modifier={program?.modifier}
-                title={program?.title}
-                seconds={program?.seconds}
-                minutes={program?.minutes}
-                onComplete={handleWorkoutComplete}
-              />
-            )
-          ) : (
-            <>
-              <Blurb as="div">
-                <div dangerouslySetInnerHTML={{ __html: selectedProgram.description ?? "" }} />
-              </Blurb>
-              <CenterHorizontal>
-                <StartWorkoutButton onClick={handleBackButton}>Back to List</StartWorkoutButton>
-                <StartWorkoutButton onClick={handleStartWorkout}>Start Workout</StartWorkoutButton>
-              </CenterHorizontal>
-            </>
-          )}
-        </WorkoutContainer>
-        <Container>
-          {workoutStarted && !isManual && phase !== "end" && getNextWorkout() && (
-            <NextContainer>
-              <NextWorkoutText>
-                Next: <strong>{getNextWorkout().title}</strong>
-              </NextWorkoutText>
-            </NextContainer>
-          )}
-          <div>&nbsp;</div>
-          {workoutStarted && phase !== "end" && <ResetButton onClick={handleResetWorkout}>Reset</ResetButton>}
-        </Container>
-      </>
+      <WorkoutDetail
+        program={selectedProgram}
+        stats={getStatsFor(selectedProgram)}
+        onBack={handleBackButton}
+        onStart={handleStartWorkout}
+      />
     );
   }
 
   return (
-    <>
-      <Tabs role="tablist">
-        <Tab role="tab" aria-selected={view !== "progress"} $active={view !== "progress"} onClick={() => setView("workouts")}>
-          Workouts
-        </Tab>
-        <Tab role="tab" aria-selected={view === "progress"} $active={view === "progress"} onClick={() => setView("progress")}>
-          Progress
-        </Tab>
-      </Tabs>
-
-      {view === "progress" && <ProgressScreen stats={stats} refreshStats={refreshStats} />}
+    <Shell view={view} onNavigate={setView} username={username} onLogout={onLogout}>
+      {view === "progress" && (
+        <Page $wide>
+          <ProgressScreen stats={stats} refreshStats={refreshStats} />
+        </Page>
+      )}
 
       {view === "editor" && (
-        <WorkoutEditor
-          key={editingProgram?.id ?? "new"}
-          program={editingProgram}
-          onSave={handleSaveWorkout}
-          onCancel={() => {
-            setEditingProgram(null);
-            setView("workouts");
-          }}
-        />
+        <Page>
+          <WorkoutEditor
+            key={editingProgram?.id ?? "new"}
+            program={editingProgram}
+            onSave={handleSaveWorkout}
+            onCancel={() => {
+              setEditingProgram(null);
+              setView("workouts");
+            }}
+          />
+        </Page>
       )}
 
       {view === "workouts" && (
-        <>
+        <Page $wide>
           <ImportBanner username={username} onImported={refreshStats} />
           {resumeProgram && (
-            <ResumeBanner>
+            <Banner>
               <span>
-                Resume <strong>{resumeProgram.title}</strong>?
+                Pick up where you left off in <strong>{resumeProgram.title}</strong>?
               </span>
-              <CenterHorizontal>
-                <StartWorkoutButton onClick={handleDiscardResume}>Discard</StartWorkoutButton>
-                <StartWorkoutButton onClick={handleResume}>Resume</StartWorkoutButton>
-              </CenterHorizontal>
-            </ResumeBanner>
+              <BannerActions>
+                <Button $variant="ghost" $size="sm" onClick={handleDiscardResume}>
+                  Discard
+                </Button>
+                <Button $variant="primary" $size="sm" onClick={handleResume}>
+                  Resume
+                </Button>
+              </BannerActions>
+            </Banner>
           )}
           {workoutsError && (
-            <ErrorBox>
-              {workoutsError} <QuietButton onClick={reloadWorkouts}>Retry</QuietButton>
-            </ErrorBox>
+            <Banner $error>
+              <span>{workoutsError}</span>
+              <Button $variant="ghost" $size="sm" onClick={reloadWorkouts}>
+                Retry
+              </Button>
+            </Banner>
           )}
-          {!workouts && !workoutsError && <Muted>Loading workouts…</Muted>}
-          <WorkoutList>
-            {workouts?.map((item) => (
-              <WorkoutListItem
-                key={item.id}
-                program={item}
-                stats={getStatsFor(item)}
-                onStart={handleProgramClick}
-                onCopy={handleCopy}
-                onEdit={(p) => {
-                  setEditingProgram(p);
-                  setView("editor");
-                }}
-                onDelete={handleDelete}
-              />
-            ))}
-          </WorkoutList>
+          {!workouts && !workoutsError && <Muted style={{ marginTop: 24 }}>Loading workouts…</Muted>}
           {workouts && (
-            <QuietButton
-              onClick={() => {
+            <WorkoutList
+              workouts={workouts}
+              getStatsFor={getStatsFor}
+              onOpen={handleProgramClick}
+              onCopy={handleCopy}
+              onEdit={(p) => {
+                setEditingProgram(p);
+                setView("editor");
+              }}
+              onDelete={handleDelete}
+              onNew={() => {
                 setEditingProgram(null);
                 setView("editor");
               }}
-            >
-              + New workout
-            </QuietButton>
+            />
           )}
-        </>
+        </Page>
       )}
-    </>
+    </Shell>
   );
 }
 
 export default App;
 
-const WorkoutList = styled.div`
-  margin-top: 30px;
-`;
-const WorkoutItem = styled.div`
-  background: #414141;
-  padding: 15px 24px;
-  text-align: left;
-  border-radius: 6px;
-  font-weight: 800;
+export const Banner = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
   gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid ${(p) => (p.$error ? "rgba(236, 143, 143, 0.4)" : "rgba(0, 183, 172, 0.45)")};
+  background: ${(p) => (p.$error ? "var(--danger-soft)" : "var(--accent-soft)")};
 `;
 
-const ItemSubtitle = styled.div`
-  color: #a0a0a0;
-  font-weight: 400;
-  font-size: 0.85rem;
-  margin-top: 4px;
-`;
-
-const ItemActions = styled.div`
+const BannerActions = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 6px;
-  flex-shrink: 0;
-`;
-
-const SmallActions = styled.div`
-  display: flex;
-  gap: 6px;
-  justify-content: flex-end;
-`;
-
-const WorkoutListItem = ({ program, stats, onStart, onCopy, onEdit, onDelete }) => {
-  const subtitle = useMemo(() => {
-    const ownership = program.builtIn ? null : "Custom";
-    if (!stats || stats.timesCompleted === 0) return ownership;
-    const sessionWord = stats.timesCompleted === 1 ? "session" : "sessions";
-    if (stats.currentWeek && program.programWeeks) {
-      return `Week ${stats.currentWeek} of ${program.programWeeks} · ${stats.timesCompleted} ${sessionWord}`;
-    }
-    const lastDate = stats.lastCompletedAt ? new Date(stats.lastCompletedAt).toLocaleDateString() : null;
-    return `${stats.timesCompleted} ${sessionWord}${lastDate ? ` · last ${lastDate}` : ""}`;
-  }, [stats, program.programWeeks, program.builtIn]);
-
-  return (
-    <WorkoutItem>
-      <div>
-        <span>{program.title}</span>
-        {subtitle && <ItemSubtitle>{subtitle}</ItemSubtitle>}
-      </div>
-      <ItemActions>
-        <button onClick={() => onStart(program)}> start </button>
-        <SmallActions>
-          {program.builtIn ? (
-            <QuietButton onClick={() => onCopy(program)} title="Copy into your own editable workouts">
-              copy
-            </QuietButton>
-          ) : (
-            <>
-              <QuietButton onClick={() => onEdit(program)}>edit</QuietButton>
-              <DangerButton onClick={() => onDelete(program)} aria-label={`Delete ${program.title}`}>
-                ×
-              </DangerButton>
-            </>
-          )}
-        </SmallActions>
-      </ItemActions>
-    </WorkoutItem>
-  );
-};
-
-const Container = styled.div``;
-
-const NextContainer = styled.div``;
-
-export const CenterHorizontal = styled.div`
-  display: flex;
-  justify-content: space-around;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-bottom: 12px;
-`;
-const CircuitTrainerLogo = styled.img`
-  height: 4em;
-`;
-const CircuitTrainerText = styled.h1`
-  font-size: 1.9rem;
-  font-family: "Revalia", sans-serif;
-`;
-
-const UserLine = styled.div`
-  color: #a0a0a0;
-  font-size: 0.85rem;
-  font-family: "Source Sans 3", sans-serif;
-`;
-
-const LinkButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  color: ${ACCENT};
-  font-size: inherit;
-`;
-
-const Tabs = styled.div`
-  display: flex;
-  justify-content: center;
   gap: 8px;
-  margin-top: 8px;
-`;
-
-const Tab = styled.button`
-  background: ${(p) => (p.$active ? "#414141" : "none")};
-  color: ${(p) => (p.$active ? ACCENT : "#a0a0a0")};
-  border: 1px solid ${(p) => (p.$active ? ACCENT : "#5f5e5a")};
-  font-weight: 600;
-`;
-
-const WorkoutContainer = styled.div`
-  background-color: #414141;
-  padding: 21px;
-  border-radius: 18px;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  text-align: left;
-`;
-
-const WorkoutTitle = styled.h2`
-  color: #00b7ac;
-  font-family: "Source Sans 3", sans-serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 1.6rem;
-  text-align: center;
-`;
-
-const Blurb = styled.p`
-  color: #e2e2e2;
-  margin-bottom: 0;
-  font-family: "Source Sans 3", sans-serif;
-`;
-
-const EndSummary = styled.div`
-  width: 100%;
-  text-align: center;
-`;
-
-const TotalTimeText = styled.p`
-  color: #e2e2e2;
-  font-size: 1.2rem;
-  font-family: "Source Sans 3", sans-serif;
-`;
-
-const Divider = styled.hr`
-  border: 0;
-  height: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-`;
-
-const StartWorkoutButton = styled.button`
-  margin-top: 15px;
-  margin-bottom: 15px;
-`;
-
-const ResetButton = styled.button`
-  background-color: #603939;
-`;
-const NextWorkoutText = styled(Blurb)`
-  font-size: 1.2rem;
-`;
-
-const ResumeBanner = styled.div`
-  background-color: #2d4a45;
-  border: 1px solid #03b7ad;
-  padding: 15px 24px;
-  border-radius: 6px;
-  margin-top: 30px;
-  text-align: center;
-
-  span {
-    color: #e2e2e2;
-    font-family: "Source Sans 3", sans-serif;
-  }
-`;
-
-const ErrorBox = styled.div`
-  color: #e7a0a0;
-  margin-top: 20px;
-  font-family: "Source Sans 3", sans-serif;
 `;

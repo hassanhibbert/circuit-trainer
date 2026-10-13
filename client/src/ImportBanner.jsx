@@ -61,7 +61,7 @@ export const ImportBanner = ({ username, onImported }) => {
         <QuietButton onClick={handleDismiss} disabled={busy}>
           No thanks
         </QuietButton>
-        <PrimaryButton onClick={handleImport} disabled={busy}>
+        <PrimaryButton $size="sm" onClick={handleImport} disabled={busy}>
           {busy ? "Importing…" : "Import"}
         </PrimaryButton>
       </Buttons>
@@ -70,19 +70,19 @@ export const ImportBanner = ({ username, onImported }) => {
 };
 
 const Banner = styled.div`
-  background-color: #2d4a45;
-  border: 1px solid #03b7ad;
-  padding: 15px 24px;
-  border-radius: 6px;
-  margin-top: 30px;
-  text-align: center;
-  color: #e2e2e2;
-  font-family: "Source Sans 3", sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(0, 183, 172, 0.45);
+  background: var(--accent-soft);
 `;
 
 const Buttons = styled.div`
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 8px;
 `;

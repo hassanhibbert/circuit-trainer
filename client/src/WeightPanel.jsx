@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { toast } from "react-toastify";
 import { api, errorMessage } from "./api";
 import { WeightChart } from "./WeightChart";
-import { Card, CardTitle, DangerButton, Input, Label, Muted, PrimaryButton, Row, formatLb, localToday, MUTED } from "./ui";
+import { Button, Card, CardTitle, Input, Label, Muted, formatLb, localToday } from "./ui";
+import { CloseIcon } from "./icons";
 
 const daysAgo = (days) => {
   const date = new Date();
@@ -16,6 +17,7 @@ export const WeightPanel = ({ onChanged }) => {
   const [measuredOn, setMeasuredOn] = useState(localToday);
   const [weightLb, setWeightLb] = useState("");
   const [saving, setSaving] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -62,69 +64,108 @@ export const WeightPanel = ({ onChanged }) => {
   return (
     <Card>
       <CardTitle>Body weight</CardTitle>
-      <form onSubmit={handleSubmit}>
-        <Row>
-          <Label>
-            Date
-            <Input type="date" value={measuredOn} max={localToday()} onChange={(e) => setMeasuredOn(e.target.value)} required />
-          </Label>
-          <Label>
-            Weight (lb)
-            <Input
-              type="number"
-              inputMode="decimal"
-              step="0.1"
-              min="50"
-              max="1000"
-              value={weightLb}
-              onChange={(e) => setWeightLb(e.target.value)}
-              required
-              style={{ width: "7em" }}
-            />
-          </Label>
-          <PrimaryButton type="submit" disabled={saving}>
-            Log
-          </PrimaryButton>
-        </Row>
-      </form>
+      <Form onSubmit={handleSubmit}>
+        <Label>
+          Date
+          <Input type="date" value={measuredOn} max={localToday()} onChange={(e) => setMeasuredOn(e.target.value)} required />
+        </Label>
+        <Label>
+          Weight (lb)
+          <Input
+            type="number"
+            inputMode="decimal"
+            step="0.1"
+            min="50"
+            max="1000"
+            value={weightLb}
+            onChange={(e) => setWeightLb(e.target.value)}
+            required
+          />
+        </Label>
+        <Button type="submit" $variant="primary" disabled={saving}>
+          Log
+        </Button>
+      </Form>
       {entries.length === 0 ? (
         <Muted>No weigh-ins yet. Log one to start your trend.</Muted>
       ) : (
         <>
           <WeightChart entries={entries} />
           <List>
-            {entries.slice(0, 10).map((entry) => (
+            {entries.slice(0, showAll ? entries.length : 5).map((entry) => (
               <li key={entry.id}>
-                <span>{new Date(`${entry.measuredOn}T00:00:00`).toLocaleDateString()}</span>
+                <span>
+                  {new Date(`${entry.measuredOn}T00:00:00`).toLocaleDateString(undefined, {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
                 <strong>{formatLb(entry.weightLb)}</strong>
-                <DangerButton onClick={() => handleDelete(entry.id)} aria-label={`Delete ${entry.measuredOn}`}>
-                  ×
-                </DangerButton>
+                <DeleteButton onClick={() => handleDelete(entry.id)} aria-label={`Delete ${entry.measuredOn}`}>
+                  <CloseIcon size={14} />
+                </DeleteButton>
               </li>
             ))}
           </List>
-          {entries.length > 10 && <Muted>Showing the 10 most recent of {entries.length} in the last 6 months.</Muted>}
+          {entries.length > 5 && (
+            <Button $variant="ghost" $size="sm" onClick={() => setShowAll((v) => !v)}>
+              {showAll ? "Show less" : `Show all ${entries.length}`}
+            </Button>
+          )}
         </>
       )}
     </Card>
   );
 };
 
+const Form = styled.form`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+
+    button {
+      grid-column: 1 / -1;
+    }
+  }
+`;
+
 const List = styled.ul`
   list-style: none;
   padding: 0;
-  margin: 8px 0 0;
+  margin: 4px 0 12px;
 
   li {
     display: grid;
     grid-template-columns: 1fr auto auto;
     gap: 12px;
     align-items: center;
-    padding: 4px 0;
-    border-bottom: 1px solid #4d4d4d;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
   }
 
   span {
-    color: ${MUTED};
+    color: var(--muted);
+  }
+`;
+
+const DeleteButton = styled.button`
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+
+  &:hover {
+    background: var(--danger-soft);
+    color: var(--danger);
   }
 `;

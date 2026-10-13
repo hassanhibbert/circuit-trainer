@@ -1,5 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { Button } from "./ui";
+import { CountDown, ExerciseName, Modifier } from "./CircuitTimer";
 import { getFormattedCountdown, getCueDuration } from "./utils";
 import { useInterval } from "./useInterval";
 import { useCue } from "./useCue";
@@ -41,101 +43,66 @@ export const ManualCircuitTimer = ({
   if (phase === "break") {
     const minutes = Math.floor(breakElapsedSeconds / 60);
     const seconds = breakElapsedSeconds % 60;
+    const restDone = restTargetSeconds && breakElapsedSeconds >= restTargetSeconds;
 
     return (
-      <>
-        <WorkoutHeading>Break</WorkoutHeading>
+      <Wrapper>
+        <Kicker>Rest</Kicker>
+        <CountDown style={restDone ? { color: "var(--accent)" } : undefined}>
+          {getFormattedCountdown(minutes, seconds)}
+        </CountDown>
         {restTargetSeconds && (
-          <RestTarget>
-            Target:{" "}
-            {getFormattedCountdown(
-              Math.floor(restTargetSeconds / 60),
-              restTargetSeconds % 60
-            )}
-          </RestTarget>
+          <Modifier>
+            Target {getFormattedCountdown(Math.floor(restTargetSeconds / 60), restTargetSeconds % 60)}
+          </Modifier>
         )}
-        <Container>
-          <CountDown>{getFormattedCountdown(minutes, seconds)}</CountDown>
-          <ButtonAction>
-            <button onClick={onNextWorkout}>Next Workout</button>
-          </ButtonAction>
-        </Container>
-      </>
+        <Action>
+          <Button $variant="primary" $size="lg" $block onClick={onNextWorkout}>
+            Next exercise
+          </Button>
+        </Action>
+      </Wrapper>
     );
   }
 
   return (
-    <>
-      <WorkoutHeading>{title}</WorkoutHeading>
-      {setLabel && <SetLabel>{setLabel}</SetLabel>}
-      {reps && <RepsText>{reps}</RepsText>}
-      {modifier && <Blurb>{modifier}</Blurb>}
-      {hasHoldTimer && (
-        <Container>
-          <CountDown>
-            {getFormattedCountdown(
-              Math.floor(remaining / 60),
-              remaining % 60
-            )}
-          </CountDown>
-        </Container>
-      )}
-      <Container>
-        <ButtonAction>
-          <button onClick={onFinishExercise}>
-            {isLastExercise ? "Finish Workout" : "Start Break"}
-          </button>
-        </ButtonAction>
-      </Container>
-    </>
+    <Wrapper>
+      {setLabel && <Kicker>{setLabel}</Kicker>}
+      <ExerciseName>{title}</ExerciseName>
+      {reps && <Reps>{reps}</Reps>}
+      {modifier && <Modifier>{modifier}</Modifier>}
+      {hasHoldTimer && <CountDown>{getFormattedCountdown(Math.floor(remaining / 60), remaining % 60)}</CountDown>}
+      <Action>
+        <Button $variant="primary" $size="lg" $block onClick={onFinishExercise}>
+          {isLastExercise ? "Finish workout" : "Done, start rest"}
+        </Button>
+      </Action>
+    </Wrapper>
   );
 };
 
-const ButtonAction = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin-top: 15px;
-`;
-
-const WorkoutHeading = styled.h2`
+const Wrapper = styled.div`
   text-align: center;
 `;
 
-const SetLabel = styled.p`
-  color: #00b7ac;
-  margin: 0;
+const Kicker = styled.p`
+  display: inline-block;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
   font-weight: 700;
-  text-align: center;
+  font-size: 0.9rem;
 `;
 
-const RepsText = styled.p`
-  color: #e2e2e2;
-  margin: 4px 0 0;
-  font-family: "Source Sans 3", sans-serif;
-  font-size: 1.3rem;
-  text-align: center;
+const Reps = styled.p`
+  font-family: "Oswald", sans-serif;
+  font-size: 2.6rem;
+  font-weight: 600;
+  margin-top: 12px;
 `;
 
-const RestTarget = styled.p`
-  color: #e2e2e2;
-  margin: 0;
-  font-family: "Source Sans 3", sans-serif;
-  text-align: center;
-`;
-
-const Blurb = styled.p`
-  color: #e2e2e2;
-  margin-bottom: 0;
-  font-family: "Source Sans 3", sans-serif;
-  text-align: center;
-`;
-
-const Container = styled.div`
-  text-align: center;
-`;
-
-const CountDown = styled.h3`
-  font-size: 5em;
-  padding: 0;
-  margin: 0;
+const Action = styled.div`
+  margin-top: 28px;
 `;

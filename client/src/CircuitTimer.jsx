@@ -3,6 +3,8 @@ import { useInterval } from "./useInterval";
 import { useCue } from "./useCue";
 import { getFormattedCountdown, getCueDuration } from "./utils";
 import styled from "styled-components";
+import { Button } from "./ui";
+import { PauseIcon, PlayIcon, SkipIcon } from "./icons";
 
 export const CircutTimer = ({
   minutes = null,
@@ -57,48 +59,50 @@ export const CircutTimer = ({
   };
 
   return (
-    <>
-      <WorkoutHeading>{title}</WorkoutHeading>
-      {modifier && <Blurb>{modifier}</Blurb>}
-      <Container>
-        <CountDown>{getFormattedCountdown(duration.minutes, duration.seconds)}</CountDown>
-        <ButtonAction>
-          <button onClick={handlePauseResume}>
-            {paused ? "Resume" : "Pause"}
-          </button>
-          <button onClick={handleSkip}>Skip</button>
-        </ButtonAction>
-      </Container>
-    </>
+    <Wrapper>
+      <ExerciseName>{title}</ExerciseName>
+      {modifier && <Modifier>{modifier}</Modifier>}
+      <CountDown $paused={paused}>{getFormattedCountdown(duration.minutes, duration.seconds)}</CountDown>
+      <Controls>
+        <Button $size="lg" onClick={handlePauseResume}>
+          {paused ? <PlayIcon size={18} /> : <PauseIcon size={18} />}
+          {paused ? "Resume" : "Pause"}
+        </Button>
+        <Button $size="lg" $variant="ghost" onClick={handleSkip}>
+          <SkipIcon size={18} /> Skip
+        </Button>
+      </Controls>
+    </Wrapper>
   );
 };
-const ButtonAction = styled.div`
-  display: flex;
-  justify-content: space-between;
-  :first-child {
-    flex-grow: 1;
-  }
-  :last-child {
-    margin-left: 10px;
-  }
-`;
-const WorkoutHeading = styled.h2`
+
+const Wrapper = styled.div`
   text-align: center;
 `;
 
-const Blurb = styled.p`
-  color: #e2e2e2;
-  margin-bottom: 0;
-  font-family: "Source Sans 3", sans-serif;
-  text-align: center;
+export const ExerciseName = styled.h2`
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.15;
 `;
 
-const Container = styled.div`
-  text-align: center;
+export const Modifier = styled.p`
+  color: var(--muted);
+  margin-top: 6px;
 `;
 
-const CountDown = styled.h3`
-  font-size: 5em;
-  padding: 0;
-  margin: 0;
+export const CountDown = styled.div`
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(5rem, 28vw, 8rem);
+  font-weight: 600;
+  line-height: 1;
+  margin: 28px 0;
+  font-variant-numeric: tabular-nums;
+  opacity: ${(p) => (p.$paused ? 0.45 : 1)};
+`;
+
+const Controls = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 `;

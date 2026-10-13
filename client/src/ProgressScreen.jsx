@@ -4,7 +4,7 @@ import { AccountPanel } from "./AccountPanel";
 import { GoalsPanel } from "./GoalsPanel";
 import { HistoryPanel } from "./HistoryPanel";
 import { WeightPanel } from "./WeightPanel";
-import { ACCENT, CARD, MUTED, formatDuration } from "./ui";
+import { PageTitle, formatDuration } from "./ui";
 
 const formatChange = (lb) => {
   const n = Number(lb);
@@ -31,6 +31,7 @@ export const ProgressScreen = ({ stats, refreshStats }) => {
 
   return (
     <>
+      <PageTitle>Progress</PageTitle>
       <Tiles>
         {tiles.map((tile) => (
           <Tile key={tile.label}>
@@ -39,24 +40,29 @@ export const ProgressScreen = ({ stats, refreshStats }) => {
           </Tile>
         ))}
       </Tiles>
-      <GoalsPanel goals={stats?.goals ?? []} onChanged={refreshStats} />
-      <WeightPanel onChanged={refreshStats} />
-      <HistoryPanel refreshKey={historyKey} onChanged={refreshStats} />
-      <AccountPanel
-        onRestored={() => {
-          setHistoryKey((k) => k + 1);
-          refreshStats();
-        }}
-      />
+      <Columns>
+        <div>
+          <GoalsPanel goals={stats?.goals ?? []} onChanged={refreshStats} />
+          <WeightPanel onChanged={refreshStats} />
+        </div>
+        <div>
+          <HistoryPanel refreshKey={historyKey} onChanged={refreshStats} />
+          <AccountPanel
+            onRestored={() => {
+              setHistoryKey((k) => k + 1);
+              refreshStats();
+            }}
+          />
+        </div>
+      </Columns>
     </>
   );
 };
 
 const Tiles = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 12px;
-  margin-top: 24px;
 
   @media (max-width: 480px) {
     grid-template-columns: 1fr 1fr;
@@ -68,19 +74,31 @@ const Tiles = styled.div`
 `;
 
 const Tile = styled.div`
-  background: ${CARD};
-  border-radius: 12px;
-  padding: 14px 10px;
-  font-family: "Source Sans 3", sans-serif;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
 `;
 
 const TileValue = styled.div`
-  color: ${ACCENT};
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: "Oswald", sans-serif;
+  font-size: 1.7rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--accent);
 `;
 
 const TileLabel = styled.div`
-  color: ${MUTED};
+  color: var(--muted);
   font-size: 0.85rem;
+  font-weight: 600;
+`;
+
+const Columns = styled.div`
+  @media (min-width: 900px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+  }
 `;
