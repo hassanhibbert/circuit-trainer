@@ -1,12 +1,14 @@
 package com.hassanhibbert.circuit_trainer;
 
 import com.jayway.jsonpath.JsonPath;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 import java.util.UUID;
@@ -75,6 +77,31 @@ class CircuitTrainerApplicationTests {
         mvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"" + username + "\",\"password\":\"correct-horse\"}"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void refreshCookieKeepsYouSignedInUntilYouLogOut() throws Exception {
+        MvcResult registered = mvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"erin_" + UUID.randomUUID().toString().substring(0, 8)
+                                + "\",\"password\":\"correct-horse\"}"))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Cookie first = registered.getResponse().getCookie("refresh_token");
+
+        MvcResult refreshed = mvc.perform(post("/api/v1/auth/refresh").cookie(first))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").isNotEmpty())
+                .andReturn();
+        Cookie second = refreshed.getResponse().getCookie("refresh_token");
+        String accessToken = JsonPath.read(refreshed.getResponse().getContentAsString(), "$.accessToken");
+
+        mvc.perform(get("/api/v1/workouts").header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+
+        mvc.perform(post("/api/v1/auth/logout").cookie(second)).andExpect(status().isNoContent());
+
+        mvc.perform(post("/api/v1/auth/refresh").cookie(second)).andExpect(status().isUnauthorized());
+        mvc.perform(post("/api/v1/auth/refresh").cookie(first)).andExpect(status().isUnauthorized());
     }
 
     @Test

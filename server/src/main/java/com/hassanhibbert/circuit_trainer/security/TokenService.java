@@ -21,11 +21,15 @@ public class TokenService {
     }
 
     public String issue(AppUser user) {
+        return issue(user.getId(), user.getUsername());
+    }
+
+    public String issue(Long userId, String username) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(properties.issuer())
-                .subject(user.getId().toString())
-                .claim("username", user.getUsername())
+                .subject(userId.toString())
+                .claim("username", username)
                 .issuedAt(now)
                 .expiresAt(now.plus(properties.ttl()))
                 .build();

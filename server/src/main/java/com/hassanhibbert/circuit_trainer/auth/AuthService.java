@@ -16,18 +16,23 @@ public class AuthService {
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
+    private final AuthRateLimiter rateLimiter;
     private final String dummyHash;
 
-    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder,
-                       TokenService tokenService) {
+    public AuthService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder, TokenService tokenService,
+                       RefreshTokenService refreshTokenService, AuthRateLimiter rateLimiter) {
         this.appUserRepository = appUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
+        this.refreshTokenService = refreshTokenService;
+        this.rateLimiter = rateLimiter;
         this.dummyHash = passwordEncoder.encode("timing-equalizer-password");
     }
 
     @Transactional
-    public TokenResponse register(RegisterRequest request) {
+    public AuthResult register(RegisterRequest request, String clientIp) {
+        rateLimiter.checkRegister(clientIp);
         if (appUserRepository.existsByUsername(request.username())) {
             throw new DuplicateResourceException("Username '" + request.username() + "' is already taken");
         }
@@ -36,8 +41,9 @@ public class AuthService {
         return issueFor(user);
     }
 
-    @Transactional(readOnly = true)
-    public TokenResponse login(LoginRequest request) {
+    @Transactional
+    public AuthResult login(LoginRequest request, String clientIp) {
+        rateLimiter.checkLogin(clientIp, request.username());
         Optional<AppUser> user = appUserRepository.findByUsername(request.username());
         // always run bcrypt so unknown usernames take as long as wrong passwords
         String hash = user.map(AppUser::getPasswordHash).orElse(dummyHash);
@@ -45,10 +51,24 @@ public class AuthService {
         if (user.isEmpty() || !matches) {
             throw new BadCredentialsException("Invalid username or password");
         }
+        rateLimiter.loginSucceeded(request.username());
         return issueFor(user.get());
     }
 
-    private TokenResponse issueFor(AppUser user) {
-        return TokenResponse.bearer(tokenService.issue(user), tokenService.ttlSeconds(), user.getUsername());
+    public AuthResult refresh(String refreshToken) {
+        RefreshTokenService.Rotation rotation = refreshTokenService.rotate(refreshToken);
+        return new AuthResult(accessToken(rotation.userId(), rotation.username()), rotation.refreshToken());
+    }
+
+    public void logout(String refreshToken) {
+        refreshTokenService.revoke(refreshToken);
+    }
+
+    private AuthResult issueFor(AppUser user) {
+        return new AuthResult(accessToken(user.getId(), user.getUsername()), refreshTokenService.issue(user));
+    }
+
+    private TokenResponse accessToken(Long userId, String username) {
+        return TokenResponse.bearer(tokenService.issue(userId, username), tokenService.ttlSeconds(), username);
     }
 }
