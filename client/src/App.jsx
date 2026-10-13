@@ -22,7 +22,7 @@ import { WorkoutList } from "./WorkoutList";
 import { WorkoutDetail } from "./WorkoutDetail";
 import { CompleteScreen, WorkoutScreen } from "./WorkoutScreen";
 import styled from "styled-components";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useWakeLock } from "./useWakeLock";
 
 const SESSION_KEY = "circuit-trainer:session";
@@ -60,7 +60,6 @@ function App() {
 
   return (
     <>
-      <ToastContainer theme="dark" position="top-center" autoClose={3000} />
       {user ? <TrainerApp key={user.username} username={user.username} onLogout={logout} /> : <LoginScreen />}
     </>
   );
