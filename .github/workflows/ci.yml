@@ -42,4 +42,5 @@ jobs:
       - run: corepack enable
       - run: yarn install --immutable
       - run: yarn lint
+      - run: yarn test
       - run: yarn build

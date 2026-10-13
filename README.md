@@ -125,6 +125,13 @@ Unit tests with Mockito, `@WebMvcTest` controller tests, `@DataJpaTest` reposito
 `@SpringBootTest` end to end tests. The database tests run against real Postgres (Testcontainers,
 or `TEST_DB_URL` if you don't have Docker) and get skipped if neither is available.
 
+```bash
+cd client && yarn test
+```
+
+The client uses Vitest and React Testing Library: the API client, the offline save queue, the
+workout adapter, and component tests for set logging, the workout list and goals.
+
 ## Deployment
 
 - API: `render.yaml` is a Render blueprint (New > Blueprint). It creates the database, builds
