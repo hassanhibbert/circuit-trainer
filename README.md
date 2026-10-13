@@ -5,6 +5,13 @@ Workout app I built for my own weight loss and strength training at home. Circui
 
 React frontend, Spring Boot API, PostgreSQL.
 
+**Live:** [trainer.hassanhibbert.com](https://trainer.hassanhibbert.com) (the API is on Render's free tier, so the
+first request after a while can take up to a minute)
+
+| Workouts | Timer | Log sets | Progress | Weight |
+|---|---|---|---|---|
+| <img src="docs/screenshots/workouts.jpg" width="160" alt="Workout list"> | <img src="docs/screenshots/timer.jpg" width="160" alt="Timed workout countdown"> | <img src="docs/screenshots/log-sets.jpg" width="160" alt="Logging reps and weight after a workout"> | <img src="docs/screenshots/progress.jpg" width="160" alt="Stats and goals"> | <img src="docs/screenshots/weight.jpg" width="160" alt="Body weight chart"> |
+
 **Stack:** Java 21, Spring Boot 4.1, Spring Security (JWT), Spring Data JPA, PostgreSQL, Flyway,
 Testcontainers, React 19, Vite, Docker, Render, GitHub Actions. No Lombok.
 
