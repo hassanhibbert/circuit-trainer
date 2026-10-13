@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import styled from "styled-components";
 import { ACCENT, CARD, MUTED, TEXT } from "./ui";
 
-const WIDTH = 600;
-const HEIGHT = 180;
-const PAD = { top: 16, right: 16, bottom: 24, left: 44 };
+const WIDTH = 340;
+const HEIGHT = 170;
+const PAD = { top: 12, right: 10, bottom: 22, left: 32 };
 const DAY_MS = 86400000;
 
 const formatDay = (iso) =>
@@ -65,12 +65,12 @@ export const WeightChart = ({ entries }) => {
         onPointerMove={handlePointer}
         onPointerDown={handlePointer}
         onPointerLeave={() => setHoverIndex(null)}
-        style={{ touchAction: "pan-y", display: "block" }}
+        style={{ touchAction: "pan-y", display: "block", maxWidth: 560 }}
       >
         {[minW, maxW].map((w) => (
           <g key={w}>
             <line x1={PAD.left} x2={WIDTH - PAD.right} y1={yOf(w)} y2={yOf(w)} stroke="#555" strokeWidth="1" />
-            <text x={PAD.left - 6} y={yOf(w) + 4} textAnchor="end" fill={MUTED} fontSize="12">
+            <text x={PAD.left - 6} y={yOf(w) + 4} textAnchor="end" fill={MUTED} fontSize="11">
               {w}
             </text>
           </g>
@@ -86,10 +86,10 @@ export const WeightChart = ({ entries }) => {
             <circle cx={hovered.x} cy={hovered.y} r="6" fill={ACCENT} stroke={CARD} strokeWidth="2" />
           </>
         )}
-        <text x={PAD.left} y={HEIGHT - 6} fill={MUTED} fontSize="12">
+        <text x={PAD.left} y={HEIGHT - 6} fill={MUTED} fontSize="11">
           {formatDay(points[0].measuredOn)}
         </text>
-        <text x={WIDTH - PAD.right} y={HEIGHT - 6} textAnchor="end" fill={MUTED} fontSize="12">
+        <text x={WIDTH - PAD.right} y={HEIGHT - 6} textAnchor="end" fill={MUTED} fontSize="11">
           {formatDay(points.at(-1).measuredOn)}
         </text>
       </svg>

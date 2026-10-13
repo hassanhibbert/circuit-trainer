@@ -57,6 +57,14 @@ const Tiles = styled.div`
   grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 12px;
   margin-top: 24px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+
+    > :last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
 `;
 
 const Tile = styled.div`

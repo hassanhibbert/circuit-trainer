@@ -182,8 +182,8 @@ const Wrapper = styled.div`
 
 const SetTable = styled.div`
   display: grid;
-  grid-template-columns: 1fr 64px 72px 64px;
-  gap: 6px 8px;
+  grid-template-columns: minmax(0, 1fr) 52px 60px 52px;
+  gap: 6px;
   align-items: center;
 `;
 
@@ -207,9 +207,17 @@ const SetLabel = styled.div`
 `;
 
 const SmallInput = styled(Input)`
-  padding: 6px;
+  padding: 6px 4px;
   width: 100%;
   box-sizing: border-box;
+  text-align: center;
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `;
 
 const Buttons = styled.div`
