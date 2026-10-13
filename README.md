@@ -43,8 +43,10 @@ Everything except `/api/v1/auth/**` and `/actuator/health` needs `Authorization:
 
 | Method | Path | Description |
 |---|---|---|
-| POST | `/api/v1/auth/register` | Create an account, returns a token |
-| POST | `/api/v1/auth/login` | Returns a token (valid 12 hours) |
+| POST | `/api/v1/auth/register` | Create an account |
+| POST | `/api/v1/auth/login` | Returns a 15 minute access token and sets the refresh cookie |
+| POST | `/api/v1/auth/refresh` | New access token from the refresh cookie (rotates the cookie) |
+| POST | `/api/v1/auth/logout` | Revokes the refresh token and clears the cookie |
 | GET / DELETE | `/api/v1/me` | Your account / delete it (needs your password) |
 | GET / POST | `/api/v1/workouts` | Built-ins + your workouts / create one |
 | GET / PUT / DELETE | `/api/v1/workouts/{id}` | Built-ins are read-only (403) |
@@ -108,7 +110,9 @@ that isn't set (run the API from `server/` so it finds the file).
 | `DB_HOST` / `DB_PORT` / `DB_NAME` | | required unless `DB_URL` is set |
 | `DB_USERNAME` / `DB_PASSWORD` | | |
 | `JWT_SECRET` | | 32+ bytes, the app won't start without it |
-| `JWT_TTL` | `PT12H` | |
+| `JWT_TTL` | `PT15M` | access token lifetime |
+| `REFRESH_TTL` | `P30D` | refresh token lifetime |
+| `COOKIE_SECURE` | `true` | set `false` only for local http setups that drop secure cookies |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | comma separated |
 | `DB_POOL_SIZE` | `5` | |
 | `PORT` | `8080` | |
@@ -137,10 +141,19 @@ workout adapter, and component tests for set logging, the workout list and goals
 - API: `render.yaml` is a Render blueprint (New > Blueprint). It creates the database, builds
   `server/Dockerfile` and generates `JWT_SECRET`. Set `CORS_ALLOWED_ORIGINS` to the frontend url.
   The free tier sleeps, so the first request can take a while.
+- The API needs to be on a subdomain of the frontend's domain (e.g. `api.example.com` for
+  `app.example.com`) so the refresh cookie counts as same-site. Add it under the service's
+  Custom Domains in Render and point a `CNAME` at the `onrender.com` host.
 - Frontend: copy `client/.env.production.local.example` to `.env.production.local` with the Render
   url, then `yarn deploy` from `client/`.
 
 ## Notes
+
+- Access tokens last 15 minutes and are only kept in memory. The refresh token is an `HttpOnly`,
+  `Secure`, `SameSite=Strict` cookie scoped to `/api/v1/auth`, so page scripts can't read it.
+- Refresh tokens are stored as SHA-256 hashes and rotated on every use. Using an old one again
+  revokes that whole login (with a 30 second grace for two tabs refreshing at once).
+- Login is rate limited per IP and per username, registration per IP (Bucket4j), with `429` and `Retry-After`.
 
 - Every query is scoped to the logged in user, so someone else's id is a 404.
 - Built-in workouts are rows with a null owner, seeded by a Flyway migration.
