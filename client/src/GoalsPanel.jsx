@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import { useAuth } from "./AuthContext";
 import { api, errorMessage, userTimeZone } from "./api";
 import { Badge, Button, Card, CardTitle, Input, Label, Muted, ProgressBar, Select, formatLb } from "./ui";
 
@@ -16,6 +17,7 @@ const describe = (goal) => {
 };
 
 export const GoalsPanel = ({ goals, onChanged }) => {
+  const readOnly = useAuth()?.user?.readOnly;
   const [type, setType] = useState("TARGET_WEIGHT");
   const [targetValue, setTargetValue] = useState("");
   const [targetDate, setTargetDate] = useState("");
@@ -56,7 +58,7 @@ export const GoalsPanel = ({ goals, onChanged }) => {
     <Card>
       <CardHeader>
         <CardTitle>Goals</CardTitle>
-        {!adding && (
+        {!adding && !readOnly && (
           <Button $variant="ghost" $size="sm" onClick={() => setAdding(true)}>
             Add goal
           </Button>
@@ -83,7 +85,7 @@ export const GoalsPanel = ({ goals, onChanged }) => {
               {describe(goal)}
               {goal.targetDate && ` · by ${new Date(`${goal.targetDate}T00:00:00`).toLocaleDateString()}`}
             </Muted>
-            <RemoveButton onClick={() => handleDelete(goal.id)}>Remove</RemoveButton>
+            {!readOnly && <RemoveButton onClick={() => handleDelete(goal.id)}>Remove</RemoveButton>}
           </GoalFooter>
         </Goal>
       ))}

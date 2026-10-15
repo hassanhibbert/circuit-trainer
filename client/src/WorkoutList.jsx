@@ -5,7 +5,7 @@ import { lengthLabel } from "./workoutInfo";
 
 const shortDate = (iso) => new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 
-export const WorkoutList = ({ workouts, getStatsFor, onOpen, onCopy, onEdit, onDelete, onNew }) => {
+export const WorkoutList = ({ workouts, readOnly, getStatsFor, onOpen, onCopy, onEdit, onDelete, onNew }) => {
   const builtIns = workouts.filter((w) => w.builtIn);
   const mine = workouts.filter((w) => !w.builtIn);
 
@@ -14,6 +14,7 @@ export const WorkoutList = ({ workouts, getStatsFor, onOpen, onCopy, onEdit, onD
       key={program.id}
       program={program}
       stats={getStatsFor(program)}
+      readOnly={readOnly}
       onOpen={onOpen}
       onCopy={onCopy}
       onEdit={onEdit}
@@ -28,9 +29,11 @@ export const WorkoutList = ({ workouts, getStatsFor, onOpen, onCopy, onEdit, onD
 
       <SectionHeader>
         <SectionTitle>My workouts</SectionTitle>
-        <Button $size="sm" $variant="ghost" onClick={onNew}>
-          <PlusIcon size={16} /> New
-        </Button>
+        {!readOnly && (
+          <Button $size="sm" $variant="ghost" onClick={onNew}>
+            <PlusIcon size={16} /> New
+          </Button>
+        )}
       </SectionHeader>
       {mine.length ? (
         <Grid>{mine.map(renderCard)}</Grid>
@@ -43,7 +46,7 @@ export const WorkoutList = ({ workouts, getStatsFor, onOpen, onCopy, onEdit, onD
   );
 };
 
-const WorkoutCard = ({ program, stats, onOpen, onCopy, onEdit, onDelete }) => {
+const WorkoutCard = ({ program, stats, readOnly, onOpen, onCopy, onEdit, onDelete }) => {
   const stop = (fn) => (event) => {
     event.stopPropagation();
     fn(program);
@@ -73,7 +76,7 @@ const WorkoutCard = ({ program, stats, onOpen, onCopy, onEdit, onDelete }) => {
             : "Not started yet"}
         </Muted>
         <Actions>
-          {program.builtIn ? (
+          {readOnly ? null : program.builtIn ? (
             <TextButton onClick={stop(onCopy)}>Copy</TextButton>
           ) : (
             <>

@@ -36,7 +36,7 @@ class AuthControllerTest {
     private static final String LOGIN = "{\"username\":\"alice\",\"password\":\"correct-horse\"}";
 
     private static AuthResult result() {
-        return new AuthResult(TokenResponse.bearer("access-123", 900, "alice"), "refresh-123");
+        return new AuthResult(TokenResponse.bearer("access-123", 900, "alice", false), "refresh-123");
     }
 
     @Test

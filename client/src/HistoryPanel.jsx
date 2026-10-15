@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import { useAuth } from "./AuthContext";
 import { api, errorMessage } from "./api";
 import { Card, CardTitle, DangerButton, Muted, QuietButton, formatDuration, MUTED, ACCENT } from "./ui";
 
 const PAGE_SIZE = 10;
 
 export const HistoryPanel = ({ refreshKey, onChanged }) => {
+  const readOnly = useAuth()?.user?.readOnly;
   const [sessions, setSessions] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -76,7 +78,7 @@ export const HistoryPanel = ({ refreshKey, onChanged }) => {
                   </div>
                 ))}
                 {session.sets.length === 0 && !session.notes && <Muted>No sets logged.</Muted>}
-                <DangerButton onClick={() => handleDelete(session)}>Delete</DangerButton>
+                {!readOnly && <DangerButton onClick={() => handleDelete(session)}>Delete</DangerButton>}
               </Details>
             )}
           </li>

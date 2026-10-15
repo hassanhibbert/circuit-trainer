@@ -31,6 +31,11 @@ public class AuthController {
         return withCookie(HttpStatus.OK, authService.login(request, http.getRemoteAddr()));
     }
 
+    @PostMapping("/demo")
+    public ResponseEntity<TokenResponse> demo(HttpServletRequest http) {
+        return withCookie(HttpStatus.OK, authService.demo(http.getRemoteAddr()));
+    }
+
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@CookieValue(name = RefreshCookies.NAME, required = false) String refreshToken) {
         try {

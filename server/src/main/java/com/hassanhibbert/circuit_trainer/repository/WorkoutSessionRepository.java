@@ -4,6 +4,7 @@ import com.hassanhibbert.circuit_trainer.dto.stats.WorkoutStat;
 import com.hassanhibbert.circuit_trainer.entity.WorkoutSession;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -46,4 +47,9 @@ public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, 
             order by max(s.completedAt) desc
             """)
     List<WorkoutStat> statsByWorkout(@Param("ownerId") Long ownerId);
+
+    // bulk delete, the database cascades to session_sets
+    @Modifying(clearAutomatically = true)
+    @Query("delete from WorkoutSession s where s.owner.id = :ownerId")
+    int deleteAllOwnedBy(@Param("ownerId") Long ownerId);
 }

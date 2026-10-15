@@ -45,6 +45,10 @@ public class AuthRateLimiter {
         buckets.invalidate(usernameKey(username));
     }
 
+    public void checkDemo(String clientIp) {
+        consume("demo-ip:" + clientIp, limits.demoPerIpPerHour(), Duration.ofHours(1));
+    }
+
     public void checkRegister(String clientIp) {
         consume("register-ip:" + clientIp, limits.registerPerIpPerHour(), Duration.ofHours(1));
     }

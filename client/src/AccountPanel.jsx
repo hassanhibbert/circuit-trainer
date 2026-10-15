@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { api, errorMessage } from "./api";
 import { BackupControls } from "./BackupControls";
-import { Card, CardTitle, DangerButton, Input, Label, Muted, QuietButton, Row } from "./ui";
+import { Card, CardTitle, DangerButton, Input, Label, Muted, PrimaryButton, QuietButton, Row } from "./ui";
 
 export const AccountPanel = ({ onRestored }) => {
   const { user, logout } = useAuth();
@@ -25,12 +25,18 @@ export const AccountPanel = ({ onRestored }) => {
     <Card>
       <CardTitle>Your data</CardTitle>
       <Muted>Download every logged workout as JSON, or restore from a backup (old device backups work too).</Muted>
-      <BackupControls onRestored={onRestored} />
+      <BackupControls onRestored={onRestored} canRestore={!user.readOnly} />
       <CardTitle style={{ marginTop: 20 }}>Account</CardTitle>
       <Muted>Signed in as {user.username}</Muted>
       <Row style={{ marginTop: 8 }}>
         <QuietButton onClick={logout}>Log out</QuietButton>
-        {!confirming && <DangerButton onClick={() => setConfirming(true)}>Delete account</DangerButton>}
+        {user.readOnly ? (
+          <PrimaryButton $size="sm" onClick={logout}>
+            Create your account
+          </PrimaryButton>
+        ) : (
+          !confirming && <DangerButton onClick={() => setConfirming(true)}>Delete account</DangerButton>
+        )}
       </Row>
       {confirming && (
         <form onSubmit={handleDelete} style={{ marginTop: 12 }}>

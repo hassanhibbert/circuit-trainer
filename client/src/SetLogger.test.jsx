@@ -98,4 +98,11 @@ describe("SetLogger", () => {
     expect(onDone).toHaveBeenCalled();
     expect(api.get).not.toHaveBeenCalled();
   });
+
+  it("explains that the demo doesn't save workouts", () => {
+    render(<SetLogger program={toProgram(manualWorkout)} session={null} demo onDone={vi.fn()} />);
+
+    expect(screen.getByText(/this is the demo/i)).toBeInTheDocument();
+    expect(api.get).not.toHaveBeenCalled();
+  });
 });

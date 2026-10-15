@@ -12,6 +12,9 @@ import java.time.Instant;
 
 @Service
 public class TokenService {
+    public static final String DEMO_USERNAME = "Demo Trainer";
+    public static final String DEMO_SCOPE = "demo";
+
     private final JwtEncoder jwtEncoder;
     private final JwtProperties properties;
 
@@ -26,15 +29,23 @@ public class TokenService {
 
     public String issue(Long userId, String username) {
         Instant now = Instant.now();
-        JwtClaimsSet claims = JwtClaimsSet.builder()
+        JwtClaimsSet.Builder claims = JwtClaimsSet.builder()
                 .issuer(properties.issuer())
                 .subject(userId.toString())
                 .claim("username", username)
                 .issuedAt(now)
-                .expiresAt(now.plus(properties.ttl()))
-                .build();
+                .expiresAt(now.plus(properties.ttl()));
+        // spring turns scope into a SCOPE_demo authority, SecurityConfig blocks writes for it.
+        // decided here so a refreshed demo token is still read-only
+        if (isDemo(username)) {
+            claims.claim("scope", DEMO_SCOPE);
+        }
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
+        return jwtEncoder.encode(JwtEncoderParameters.from(header, claims.build())).getTokenValue();
+    }
+
+    public static boolean isDemo(String username) {
+        return DEMO_USERNAME.equals(username);
     }
 
     public long ttlSeconds() {

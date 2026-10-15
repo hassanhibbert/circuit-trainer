@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 class RefreshTokenServiceTest {
     private static final Instant NOW = Instant.parse("2026-10-13T12:00:00Z");
     private static final AuthProperties PROPS =
-            new AuthProperties(Duration.ofDays(30), true, new AuthProperties.RateLimit(20, 10, 5));
+            new AuthProperties(Duration.ofDays(30), true, new AuthProperties.RateLimit(20, 10, 5, 30));
 
     @Mock RefreshTokenRepository repository;
     private RefreshTokenService service;

@@ -34,7 +34,7 @@ class AuthRateLimiterTest {
     }
 
     private final FakeTime time = new FakeTime();
-    private final AuthRateLimiter limiter = new AuthRateLimiter(new AuthProperties.RateLimit(5, 3, 2), time);
+    private final AuthRateLimiter limiter = new AuthRateLimiter(new AuthProperties.RateLimit(5, 3, 2, 2), time);
 
     @Test
     void blocksAnIpAfterTooManyLoginsAndTellsItHowLongToWait() {

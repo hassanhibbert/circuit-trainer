@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import { AuthContext } from "./AuthContext";
-import { logIn, logOut, refreshSession, setSlowRequestHandler, setUnauthorizedHandler } from "./api";
+import { logIn, logOut, refreshSession, setSlowRequestHandler, setUnauthorizedHandler, startDemo } from "./api";
 import { Brand } from "./Shell";
 import { Button, Muted } from "./ui";
 
@@ -10,14 +10,17 @@ import { Button, Muted } from "./ui";
 export const AuthProvider = ({ children }) => {
   const [status, setStatus] = useState("checking");
   const [username, setUsername] = useState(null);
+  const [readOnly, setReadOnly] = useState(false);
 
   const signedIn = useCallback((data) => {
     setUsername(data.username);
+    setReadOnly(Boolean(data.readOnly));
     setStatus("in");
   }, []);
 
   const signedOut = useCallback(() => {
     setUsername(null);
+    setReadOnly(false);
     setStatus("out");
   }, []);
 
@@ -61,12 +64,13 @@ export const AuthProvider = ({ children }) => {
 
   const value = useMemo(
     () => ({
-      user: status === "in" ? { username } : null,
+      user: status === "in" ? { username, readOnly } : null,
       login: async (name, password) => signedIn(await logIn("/api/v1/auth/login", name, password)),
       register: async (name, password) => signedIn(await logIn("/api/v1/auth/register", name, password)),
+      tryDemo: async () => signedIn(await startDemo()),
       logout,
     }),
-    [status, username, signedIn, logout]
+    [status, username, readOnly, signedIn, logout]
   );
 
   if (status === "checking" || status === "offline") {

@@ -2,6 +2,7 @@ package com.hassanhibbert.circuit_trainer.repository;
 
 import com.hassanhibbert.circuit_trainer.entity.Workout;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -28,4 +29,9 @@ public interface WorkoutRepository extends JpaRepository<Workout, Long> {
     boolean existsByOwnerIdAndTitleIgnoreCaseAndIdNot(Long ownerId, String title, Long id);
 
     long countByOwnerId(Long ownerId);
+
+    // bulk delete, the database cascades to sections and exercises
+    @Modifying(clearAutomatically = true)
+    @Query("delete from Workout w where w.owner.id = :ownerId")
+    int deleteAllOwnedBy(@Param("ownerId") Long ownerId);
 }

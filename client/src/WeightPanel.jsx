@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { toast } from "react-toastify";
+import { useAuth } from "./AuthContext";
 import { api, errorMessage } from "./api";
 import { WeightChart } from "./WeightChart";
 import { Button, Card, CardTitle, Input, Label, Muted, formatLb, localToday } from "./ui";
@@ -13,6 +14,7 @@ const daysAgo = (days) => {
 };
 
 export const WeightPanel = ({ onChanged }) => {
+  const readOnly = useAuth()?.user?.readOnly;
   const [entries, setEntries] = useState([]);
   const [measuredOn, setMeasuredOn] = useState(localToday);
   const [weightLb, setWeightLb] = useState("");
@@ -64,28 +66,30 @@ export const WeightPanel = ({ onChanged }) => {
   return (
     <Card>
       <CardTitle>Body weight</CardTitle>
-      <Form onSubmit={handleSubmit}>
-        <Label>
-          Date
-          <Input type="date" value={measuredOn} max={localToday()} onChange={(e) => setMeasuredOn(e.target.value)} required />
-        </Label>
-        <Label>
-          Weight (lb)
-          <Input
-            type="number"
-            inputMode="decimal"
-            step="0.1"
-            min="50"
-            max="1000"
-            value={weightLb}
-            onChange={(e) => setWeightLb(e.target.value)}
-            required
-          />
-        </Label>
-        <Button type="submit" $variant="primary" disabled={saving}>
-          Log
-        </Button>
-      </Form>
+      {!readOnly && (
+        <Form onSubmit={handleSubmit}>
+          <Label>
+            Date
+            <Input type="date" value={measuredOn} max={localToday()} onChange={(e) => setMeasuredOn(e.target.value)} required />
+          </Label>
+          <Label>
+            Weight (lb)
+            <Input
+              type="number"
+              inputMode="decimal"
+              step="0.1"
+              min="50"
+              max="1000"
+              value={weightLb}
+              onChange={(e) => setWeightLb(e.target.value)}
+              required
+            />
+          </Label>
+          <Button type="submit" $variant="primary" disabled={saving}>
+            Log
+          </Button>
+        </Form>
+      )}
       {entries.length === 0 ? (
         <Muted>No weigh-ins yet. Log one to start your trend.</Muted>
       ) : (
@@ -102,9 +106,11 @@ export const WeightPanel = ({ onChanged }) => {
                   })}
                 </span>
                 <strong>{formatLb(entry.weightLb)}</strong>
-                <DeleteButton onClick={() => handleDelete(entry.id)} aria-label={`Delete ${entry.measuredOn}`}>
-                  <CloseIcon size={14} />
-                </DeleteButton>
+                {!readOnly && (
+                  <DeleteButton onClick={() => handleDelete(entry.id)} aria-label={`Delete ${entry.measuredOn}`}>
+                    <CloseIcon size={14} />
+                  </DeleteButton>
+                )}
               </li>
             ))}
           </List>

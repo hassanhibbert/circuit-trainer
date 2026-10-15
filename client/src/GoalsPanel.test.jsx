@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GoalsPanel } from "./GoalsPanel";
+import { AuthContext } from "./AuthContext";
 
 vi.mock("./api", async (importOriginal) => {
   const actual = await importOriginal();
@@ -74,5 +75,17 @@ describe("GoalsPanel", () => {
 
     await waitFor(() => expect(onChanged).toHaveBeenCalled());
     expect(api.del).toHaveBeenCalledWith("/api/v1/goals/1");
+  });
+
+  it("hides adding and removing in the read-only demo", () => {
+    render(
+      <AuthContext.Provider value={{ user: { username: "Demo Trainer", readOnly: true } }}>
+        <GoalsPanel goals={[weightGoal]} onChanged={vi.fn()} />
+      </AuthContext.Provider>
+    );
+
+    expect(screen.getByText("Reach 200.0 lb")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add goal" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Remove" })).not.toBeInTheDocument();
   });
 });

@@ -5,8 +5,9 @@ Workout app I built for my own weight loss and strength training at home. Circui
 
 React frontend, Spring Boot API, PostgreSQL.
 
-**Live:** [trainer.hassanhibbert.com](https://trainer.hassanhibbert.com) (the API is on Render's free tier, so the
-first request after a while can take up to a minute)
+**Live:** [trainer.hassanhibbert.com](https://trainer.hassanhibbert.com). Click **Try the demo** to look around a
+read-only account with ten weeks of sample workouts, no sign-up needed. (The API is on Render's free tier, so the
+first request after a while can take up to a minute.)
 
 | Workouts | Timer | Log sets | Progress | Weight |
 |---|---|---|---|---|
@@ -45,6 +46,7 @@ Everything except `/api/v1/auth/**` and `/actuator/health` needs `Authorization:
 |---|---|---|
 | POST | `/api/v1/auth/register` | Create an account |
 | POST | `/api/v1/auth/login` | Returns a 15 minute access token and sets the refresh cookie |
+| POST | `/api/v1/auth/demo` | Read-only session for the shared demo account, no password |
 | POST | `/api/v1/auth/refresh` | New access token from the refresh cookie (rotates the cookie) |
 | POST | `/api/v1/auth/logout` | Revokes the refresh token and clears the cookie |
 | GET / DELETE | `/api/v1/me` | Your account / delete it (needs your password) |
@@ -153,7 +155,10 @@ workout adapter, and component tests for set logging, the workout list and goals
   `Secure`, `SameSite=Strict` cookie scoped to `/api/v1/auth`, so page scripts can't read it.
 - Refresh tokens are stored as SHA-256 hashes and rotated on every use. Using an old one again
   revokes that whole login (with a 30 second grace for two tabs refreshing at once).
-- Login is rate limited per IP and per username, registration per IP (Bucket4j), with `429` and `Retry-After`.
+- Login is rate limited per IP and per username, registration and the demo per IP (Bucket4j), with `429` and `Retry-After`.
+- The demo account's tokens carry a `demo` scope, and the security config rejects any non-GET request from that
+  scope with a `403`, refreshed tokens included. Its data is rebuilt relative to today on startup when stale and
+  every night, so "this week" and "Week 3 of 4" always look current.
 
 - Every query is scoped to the logged in user, so someone else's id is a 404.
 - Built-in workouts are rows with a null owner, seeded by a Flyway migration.

@@ -5,6 +5,13 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.authorization.AuthenticatedAuthorizationManager;
+import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.authorization.AuthorizationManagers;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,6 +24,8 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -43,9 +52,30 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/actuator/health", "/error").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/**").authenticated()
+                        .requestMatchers("/api/**").access(notDemo())
                         .anyRequest().authenticated())
+                .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(readOnlyDemoHandler()))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
         return http.build();
+    }
+
+    private static AuthorizationManager<RequestAuthorizationContext> notDemo() {
+        return AuthorizationManagers.allOf(
+                AuthenticatedAuthorizationManager.authenticated(),
+                AuthorizationManagers.not(AuthorityAuthorizationManager.hasAuthority("SCOPE_" + TokenService.DEMO_SCOPE)));
+    }
+
+    // the default 403 has an empty body. writes from the demo are the only 403 from security,
+    // so say why in the same problem detail shape as every other error
+    private static AccessDeniedHandler readOnlyDemoHandler() {
+        return (request, response, denied) -> {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+            response.getWriter().write("""
+                    {"type":"about:blank","title":"Read-only demo","status":403,\
+                    "detail":"The demo is read-only. Create a free account to save your own workouts."}""");
+        };
     }
 
     @Bean

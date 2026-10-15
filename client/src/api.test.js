@@ -5,6 +5,7 @@ import {
   errorMessage,
   logIn,
   logOut,
+  startDemo,
   refreshSession,
   setAccessToken,
   setSlowRequestHandler,
@@ -168,6 +169,16 @@ describe("session helpers", () => {
 
     expect(fetchMock.mock.calls[0][1].headers.Authorization).toBeUndefined();
     expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe("Bearer abc");
+  });
+
+  it("startDemo opens a session without a password", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(200, { accessToken: "demo-token", username: "Demo Trainer", readOnly: true }));
+
+    expect(await startDemo()).toMatchObject({ readOnly: true });
+    const [url, options] = fetchMock.mock.calls[0];
+    expect(url).toBe("http://localhost:8080/api/v1/auth/demo");
+    expect(options.method).toBe("POST");
+    expect(options.body).toBeUndefined();
   });
 
   it("logOut forgets the token and tells the server", async () => {

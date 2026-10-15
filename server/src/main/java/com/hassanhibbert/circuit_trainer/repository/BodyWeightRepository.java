@@ -3,6 +3,7 @@ package com.hassanhibbert.circuit_trainer.repository;
 import com.hassanhibbert.circuit_trainer.entity.BodyWeight;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,4 +28,8 @@ public interface BodyWeightRepository extends JpaRepository<BodyWeight, Long>, J
 
     @Query("select min(b.weightLb) from BodyWeight b where b.owner.id = :ownerId")
     BigDecimal lowestWeight(@Param("ownerId") Long ownerId);
+
+    @Modifying(clearAutomatically = true)
+    @Query("delete from BodyWeight b where b.owner.id = :ownerId")
+    int deleteAllOwnedBy(@Param("ownerId") Long ownerId);
 }

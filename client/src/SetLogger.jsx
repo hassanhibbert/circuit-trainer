@@ -10,7 +10,7 @@ const stepKey = (title, setLabel) => `${title}|${setLabel ?? ""}`;
 
 const toNumberOrNull = (value) => (value === "" || value == null ? null : Number(value));
 
-export const SetLogger = ({ program, session, queued, onDone }) => {
+export const SetLogger = ({ program, session, queued, demo, onDone }) => {
   const steps = useMemo(() => {
     const all = program.type === "manual" ? program.exercises : program.sections.flatMap((s) => s.units);
     return all.filter((step) => !isRestStep(step));
@@ -94,9 +94,11 @@ export const SetLogger = ({ program, session, queued, onDone }) => {
     return (
       <Card>
         <Muted>
-          {queued
-            ? "Couldn't reach the server, so this workout was saved on this device. It will sync next time the app opens."
-            : "This workout couldn't be saved."}
+          {demo
+            ? "This is the demo, so workouts aren't saved. Create a free account to keep your own history."
+            : queued
+              ? "Couldn't reach the server, so this workout was saved on this device. It will sync next time the app opens."
+              : "This workout couldn't be saved."}
         </Muted>
         <Footer>
           <Button $variant="primary" $size="lg" $block onClick={onDone}>

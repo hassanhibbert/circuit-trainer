@@ -12,7 +12,7 @@ const readFileAsText = (file) =>
     reader.readAsText(file);
   });
 
-export const BackupControls = ({ onRestored }) => {
+export const BackupControls = ({ onRestored, canRestore = true }) => {
   const fileInputRef = useRef(null);
   const [busy, setBusy] = useState(false);
 
@@ -69,9 +69,11 @@ export const BackupControls = ({ onRestored }) => {
       <QuietButton onClick={handleExport} disabled={busy}>
         Backup data
       </QuietButton>
-      <QuietButton onClick={() => fileInputRef.current?.click()} disabled={busy}>
-        Restore backup
-      </QuietButton>
+      {canRestore && (
+        <QuietButton onClick={() => fileInputRef.current?.click()} disabled={busy}>
+          Restore backup
+        </QuietButton>
+      )}
       <input
         ref={fileInputRef}
         type="file"

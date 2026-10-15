@@ -2,11 +2,11 @@ import { useState } from "react";
 import styled from "styled-components";
 import { useAuth } from "./AuthContext";
 import { errorMessage } from "./api";
-import { Card, Input, Label, Muted, PrimaryButton } from "./ui";
+import { Button, Card, Input, Label, Muted, PrimaryButton } from "./ui";
 import trainerIcon from "./assets/trainer_icon.png";
 
 export const LoginScreen = () => {
-  const { login, register } = useAuth();
+  const { login, register, tryDemo } = useAuth();
   const [mode, setMode] = useState("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +23,17 @@ export const LoginScreen = () => {
     } catch (err) {
       setError(errorMessage(err));
     } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDemo = async () => {
+    setError(null);
+    setSubmitting(true);
+    try {
+      await tryDemo();
+    } catch (err) {
+      setError(errorMessage(err));
       setSubmitting(false);
     }
   };
@@ -73,6 +84,12 @@ export const LoginScreen = () => {
           {isRegister ? "Already have an account? Log in" : "New here? Create an account"}
         </Switch>
       </Card>
+      <Demo>
+        <Muted>Just looking? Explore an account with ten weeks of sample workouts.</Muted>
+        <Button type="button" $block onClick={handleDemo} disabled={submitting}>
+          Try the demo
+        </Button>
+      </Demo>
     </Narrow>
   );
 };
@@ -127,4 +144,12 @@ const Switch = styled.button`
   margin-top: 16px;
   width: 100%;
   font-size: 0.95rem;
+`;
+
+const Demo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  text-align: center;
 `;

@@ -112,6 +112,12 @@ export async function logIn(path, username, password) {
   return data;
 }
 
+export async function startDemo() {
+  const data = await apiFetch("/api/v1/auth/demo", { method: "POST", auth: false });
+  setAccessToken(data.accessToken);
+  return data;
+}
+
 export async function logOut() {
   setAccessToken(null);
   await send("/api/v1/auth/logout", { method: "POST", auth: false }).catch(() => {});

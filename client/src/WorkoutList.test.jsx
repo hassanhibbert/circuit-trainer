@@ -55,4 +55,12 @@ describe("WorkoutList", () => {
     await user.click(screen.getByRole("button", { name: "New" }));
     expect(handlers.onNew).toHaveBeenCalled();
   });
+
+  it("offers no copy, edit, delete or new in the read-only demo", () => {
+    const handlers = { onOpen: vi.fn(), onCopy: vi.fn(), onEdit: vi.fn(), onDelete: vi.fn(), onNew: vi.fn() };
+    render(<WorkoutList workouts={[toProgram(timedWorkout), toProgram(manualWorkout)]} readOnly getStatsFor={() => null} {...handlers} />);
+
+    expect(screen.queryByRole("button", { name: /copy|edit|delete|new/i })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Open Beginner HIIT" })).toBeInTheDocument();
+  });
 });

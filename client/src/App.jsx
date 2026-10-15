@@ -60,12 +60,12 @@ function App() {
 
   return (
     <>
-      {user ? <TrainerApp key={user.username} username={user.username} onLogout={logout} /> : <LoginScreen />}
+      {user ? <TrainerApp key={user.username} username={user.username} readOnly={user.readOnly} onLogout={logout} /> : <LoginScreen />}
     </>
   );
 }
 
-function TrainerApp({ username, onLogout }) {
+function TrainerApp({ username, readOnly, onLogout }) {
   const [view, setView] = useState("workouts");
   const [editingProgram, setEditingProgram] = useState(null);
   const [selectedProgram, setSelectedProgram] = useState(null);
@@ -80,13 +80,14 @@ function TrainerApp({ username, onLogout }) {
   const isManual = selectedProgram?.type === "manual";
 
   useEffect(() => {
+    if (readOnly) return;
     flushOutbox(username).then((sent) => {
       if (sent > 0) {
         toast.success(`Synced ${sent} workout${sent === 1 ? "" : "s"} saved while offline.`, { toastId: "outbox-synced" });
         refreshStats();
       }
     });
-  }, [username, refreshStats]);
+  }, [username, readOnly, refreshStats]);
 
   const resumeProgram = pendingResume && workouts ? findSavedProgram(workouts, pendingResume) : null;
   useEffect(() => {
@@ -144,6 +145,10 @@ function TrainerApp({ username, onLogout }) {
     release();
     clearSession();
     setPhase("end");
+    if (readOnly) {
+      setCompletion({ session: null, demo: true });
+      return;
+    }
     setCompletion({ saving: true });
     recordSession(username, {
       workoutId: selectedProgram.id,
@@ -159,7 +164,7 @@ function TrainerApp({ username, onLogout }) {
         toast.error(errorMessage(err));
         setCompletion({ session: null, queued: false });
       });
-  }, [release, username, selectedProgram, totalElapsedSeconds, refreshStats]);
+  }, [release, readOnly, username, selectedProgram, totalElapsedSeconds, refreshStats]);
 
   const handleWorkoutComplete = useCallback(() => {
     if (!last) {
@@ -276,6 +281,7 @@ function TrainerApp({ username, onLogout }) {
               program={selectedProgram}
               session={completion.session}
               queued={completion.queued}
+              demo={completion.demo}
               onDone={handleReturnToList}
             />
           )
@@ -360,7 +366,18 @@ function TrainerApp({ username, onLogout }) {
 
       {view === "workouts" && (
         <Page $wide>
-          <ImportBanner username={username} onImported={refreshStats} />
+          {readOnly ? (
+            <Banner>
+              <span>
+                You&apos;re exploring a <strong>read-only demo</strong>. Run any workout, but nothing is saved.
+              </span>
+              <Button $variant="primary" $size="sm" onClick={onLogout}>
+                Create your account
+              </Button>
+            </Banner>
+          ) : (
+            <ImportBanner username={username} onImported={refreshStats} />
+          )}
           {resumeProgram && (
             <Banner>
               <span>
@@ -388,6 +405,7 @@ function TrainerApp({ username, onLogout }) {
           {workouts && (
             <WorkoutList
               workouts={workouts}
+              readOnly={readOnly}
               getStatsFor={getStatsFor}
               onOpen={handleProgramClick}
               onCopy={handleCopy}

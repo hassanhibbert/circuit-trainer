@@ -55,6 +55,15 @@ public class AuthService {
         return issueFor(user.get());
     }
 
+    // one click, no password. the demo user's real password is random and never stored
+    @Transactional
+    public AuthResult demo(String clientIp) {
+        rateLimiter.checkDemo(clientIp);
+        AppUser demo = appUserRepository.findByUsername(TokenService.DEMO_USERNAME)
+                .orElseThrow(() -> new IllegalStateException("Demo account missing, it's created at startup"));
+        return issueFor(demo);
+    }
+
     public AuthResult refresh(String refreshToken) {
         RefreshTokenService.Rotation rotation = refreshTokenService.rotate(refreshToken);
         return new AuthResult(accessToken(rotation.userId(), rotation.username()), rotation.refreshToken());
@@ -69,6 +78,7 @@ public class AuthService {
     }
 
     private TokenResponse accessToken(Long userId, String username) {
-        return TokenResponse.bearer(tokenService.issue(userId, username), tokenService.ttlSeconds(), username);
+        return TokenResponse.bearer(tokenService.issue(userId, username), tokenService.ttlSeconds(), username,
+                TokenService.isDemo(username));
     }
 }
